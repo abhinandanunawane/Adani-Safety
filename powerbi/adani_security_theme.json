@@ -1,0 +1,7 @@
+{
+  "name": "Adani Security Theme (Logo Gradient)",
+  "dataColors": ["#0CA6D5", "#1C6FCB", "#6B3FC1", "#CF3F79", "#0F9D58", "#D93025", "#334155", "#94A3B8"],
+  "background": "#F3F7FC",
+  "foreground": "#132238",
+  "tableAccent": "#1C6FCB"
+}

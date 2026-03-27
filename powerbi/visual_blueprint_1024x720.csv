@@ -1,0 +1,26 @@
+PageName,Section,VisualType,Title,X,Y,W,H,FieldsHint
+Page 1 - SOC Overview,KPI Row (10 cards),Card (new),KPI cards grid,196,120,816,190,KPIName + [KPI Current] + [Trend Arrow] + conditional color
+Page 1 - SOC Overview,Chart 1,Line chart,Incident Trend,196,320,310,170,Date on X; [KPI Current] on Y; KPIName as legend
+Page 1 - SOC Overview,Chart 2,Donut chart,Severity Mix,514,320,160,170,Severity as legend; Count rows or [KPI Current]
+Page 1 - SOC Overview,Chart 3,Clustered column chart,Alerts by Source,682,320,160,170,SourceSystem on axis; Count rows
+Page 1 - SOC Overview,Chart 4,Funnel,Funnel Lifecycle,850,320,162,170,Status or lifecycle stage; Count rows
+Page 1 - SOC Overview,Table,Table,Detailed KPI Table,196,500,816,200,KPIName, [KPI Current], [KPI Target], [Trend Arrow], Status, Last Update, Owner
+Page 2 - Threat Detection,KPI Row (5 cards),Card (new),Top KPIs,196,120,816,120,Top 5 KPIs for Threat Detection
+Page 2 - Threat Detection,Chart 1,Funnel,Detection-to-Response Funnel,196,250,270,220,Detected->Triage->Assigned->Closed (use Status as proxy)
+Page 2 - Threat Detection,Chart 2,Bar chart,Top Threat Types,476,250,270,220,IncidentType/ThreatType (or KPIName) on axis; count/value
+Page 2 - Threat Detection,Chart 3,Donut chart,Source Mix,756,250,256,220,SourceSystem split
+Page 2 - Threat Detection,Table,Table,Threat KPI Detail,196,480,816,220,Same table fields
+Page 3 - Vulnerability & Patch,KPI Row (5 cards),Card (new),Top KPIs,196,120,816,120,Top 5 KPIs for Vulnerability & Patch
+Page 3 - Vulnerability & Patch,Chart 1,Matrix (heatmap),Asset Risk Heatmap,196,250,408,220,Asset/Site rows; Severity columns; conditional format by count/value
+Page 3 - Vulnerability & Patch,Chart 2,Line chart,Patch/Exposure Trend,614,250,398,220,Date X; [KPI Current] Y; KPIName legend
+Page 3 - Vulnerability & Patch,Table,Table,Vulnerability Detail,196,480,816,220,Same table fields
+Page 4 - Identity & Access,KPI Row (8 cards),Card (new),IAM KPIs,196,120,816,160,Top 8 KPIs
+Page 4 - Identity & Access,Chart 1,Filled map / Shape map,India Risk by Region,196,292,320,220,Region as location; [KPI Current] as color saturation
+Page 4 - Identity & Access,Chart 2,Donut chart,Access Status Mix,526,292,240,220,Status split
+Page 4 - Identity & Access,Chart 3,Column chart,Failed Logins by Site,776,292,236,220,Site axis; count/value
+Page 4 - Identity & Access,Table,Table,Access Detail,196,522,816,178,Same table fields
+Page 5 - Compliance & Resilience,KPI Row (6 cards),Card (new),Compliance KPIs,196,120,816,140,Top 6 KPIs
+Page 5 - Compliance & Resilience,Chart 1,Gauge,Overall Compliance,196,270,270,210,[KPI Current] as value; [KPI Target] as target
+Page 5 - Compliance & Resilience,Chart 2,Column chart,Findings by BU,476,270,270,210,BusinessUnit axis; count/value
+Page 5 - Compliance & Resilience,Chart 3,Donut chart,Controls Pass/Fail,756,270,256,210,Status split
+Page 5 - Compliance & Resilience,Table,Table,Compliance Detail,196,490,816,212,Same table fields

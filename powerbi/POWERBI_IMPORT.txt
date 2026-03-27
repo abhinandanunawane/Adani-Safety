@@ -1,0 +1,23 @@
+Power BI — Converter MIS prototype data
+=======================================
+
+Source CSVs (regenerate with: cscript //nologo tools\export-converter-csv.js)
+  - data\Converter_MIS_master.csv  — KPI-level rows (Excel "master" / MIS dashboard sheet structure)
+  - data\Converter_MIS_summary.csv — BSC-style perspective rows (Excel "summary" sheet)
+
+Import
+  1. Get Data > Text/CSV > load both files.
+  2. In Model view: add a small "Page" dimension if needed (PageIndex 0–5 maps to MIS pages P1–P5; use for slicers).
+  3. Relationships: summary is standalone or linked by a shared "Perspective" key if you add one in Excel later.
+  4. Measures: e.g. Avg Score = AVERAGE ( master[Current_Value] ), KPI count = COUNTROWS ( master ).
+
+Charts (readability)
+  - Turn on X-axis title, Y-axis title, and data labels on bar/column/line visuals.
+  - Set Y-axis start at 0 for index/score 0–100; use consistent margins in Format > padding.
+
+JavaScript in Power BI
+  - Standard report visuals do not run your own JavaScript.
+  - Options: Custom Visuals SDK (TypeScript/JavaScript packaged as a visual), or Power BI Embedded with the client API in the host app. R/Python visuals are separate from JS.
+
+When Converter_MIStoDB_Feb26.xlsx is available
+  - Place under data\ and use Power Query to replace the CSV sources, or export fresh CSVs from Excel and refresh the dataset.

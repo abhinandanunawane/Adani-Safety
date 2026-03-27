@@ -1,0 +1,51 @@
+﻿PageNo,PageName,KPIOrder,KPIName
+1,Page 1 - SOC Overview,1,Total Security Incidents
+1,Page 1 - SOC Overview,2,Critical Incidents
+1,Page 1 - SOC Overview,3,Mean Time to Detect (MTTD)
+1,Page 1 - SOC Overview,4,Mean Time to Respond (MTTR)
+1,Page 1 - SOC Overview,5,SLA Compliance Rate
+1,Page 1 - SOC Overview,6,Open High-Risk Alerts
+1,Page 1 - SOC Overview,7,False Positive Rate
+1,Page 1 - SOC Overview,8,Incident Recurrence Rate
+1,Page 1 - SOC Overview,9,SOC Analyst Utilization
+1,Page 1 - SOC Overview,10,Escalation Rate
+2,Page 2 - Threat Detection,1,Threats Detected per Day
+2,Page 2 - Threat Detection,2,Blocked Malware Attempts
+2,Page 2 - Threat Detection,3,Ransomware Detection Count
+2,Page 2 - Threat Detection,4,Phishing Detection Count
+2,Page 2 - Threat Detection,5,EDR Coverage Rate
+2,Page 2 - Threat Detection,6,XDR Alert Volume
+2,Page 2 - Threat Detection,7,IOC Match Rate
+2,Page 2 - Threat Detection,8,Suspicious Login Attempts
+2,Page 2 - Threat Detection,9,Lateral Movement Alerts
+2,Page 2 - Threat Detection,10,Anomalous Network Sessions
+3,Page 3 - Vulnerability & Patch,1,Critical Vulnerabilities Open
+3,Page 3 - Vulnerability & Patch,2,High Vulnerabilities Open
+3,Page 3 - Vulnerability & Patch,3,Vulnerability Remediation Rate
+3,Page 3 - Vulnerability & Patch,4,Patch Compliance Rate
+3,Page 3 - Vulnerability & Patch,5,Average Patch Age (Days)
+3,Page 3 - Vulnerability & Patch,6,Internet-Facing Asset Risk Score
+3,Page 3 - Vulnerability & Patch,7,Unpatched Endpoint Count
+3,Page 3 - Vulnerability & Patch,8,CVSS Weighted Exposure
+3,Page 3 - Vulnerability & Patch,9,Scan Coverage Rate
+3,Page 3 - Vulnerability & Patch,10,Configuration Drift Incidents
+4,Page 4 - Identity & Access,1,MFA Adoption Rate
+4,Page 4 - Identity & Access,2,Privileged Account Count
+4,Page 4 - Identity & Access,3,Dormant Account Count
+4,Page 4 - Identity & Access,4,Failed Login Rate
+4,Page 4 - Identity & Access,5,Password Policy Compliance
+4,Page 4 - Identity & Access,6,Access Review Completion Rate
+4,Page 4 - Identity & Access,7,Unauthorized Access Attempts
+4,Page 4 - Identity & Access,8,IAM Provisioning SLA
+4,Page 4 - Identity & Access,9,PAM Session Violations
+4,Page 4 - Identity & Access,10,Third-Party Access Risk Score
+5,Page 5 - Compliance & Resilience,1,Compliance Controls Pass Rate
+5,Page 5 - Compliance & Resilience,2,Audit Findings Open
+5,Page 5 - Compliance & Resilience,3,Data Loss Prevention (DLP) Incidents
+5,Page 5 - Compliance & Resilience,4,Backup Success Rate
+5,Page 5 - Compliance & Resilience,5,Recovery Time Objective (RTO) Achievement
+5,Page 5 - Compliance & Resilience,6,Disaster Recovery Drill Score
+5,Page 5 - Compliance & Resilience,7,Business Continuity Readiness
+5,Page 5 - Compliance & Resilience,8,Policy Acknowledgement Rate
+5,Page 5 - Compliance & Resilience,9,Security Awareness Training Completion
+5,Page 5 - Compliance & Resilience,10,Third-Party Compliance Score

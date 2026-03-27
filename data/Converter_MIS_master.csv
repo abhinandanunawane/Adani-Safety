@@ -1,0 +1,76 @@
+SrNo,KPI_Name,Data_Source,Formula_Note,Current_Value,Target,Delta,PageIndex,Last_Update,BU,Site,Severity,Status
+1,TRIR,Kronos,(Total/raised)*100,83,100,13,0,2026-03-24,RMRW,Hazira,Critical,In Progress
+2,PSI,SAFEX GOVERNANCE Module,Direct Value,69,100,14,0,2026-03-23,RMRW,Mundra SEZ,High,In Progress
+3,PSTIR,SAFEX ATS Module,SAFEX formula,58,100,-6,0,2026-03-22,Airports,Mundra SEZ,High,Open
+4,PSNM,Manual / CMP Module,Direct Value,64,100,-4,0,2026-03-21,RMRW,Raipur,Low,Open
+5,Total Fire incident,Sharepoint,Direct Value,95,100,-7,0,2026-03-25,Defense & Aerospace,Raipur,High,Resolved
+6,Near Miss FR,Manual / CMP Module,SAFEX formula,90,100,1,0,2026-03-24,ANIL-Wind,Mundra SEZ,High,Resolved
+7,Total Leak/spill cases,SAFEX I&M Module,Direct value,68,100,-4,0,2026-03-23,Ports,Hazira,Critical,In Progress
+8,Total Injury Illness incidents,SAFEX ATS Module,SAFEX formula,70,100,13,0,2026-03-22,Hydro PSP,Mundra SEZ,High,In Progress
+9,Life saved cases,Kronos,SAFEX formula,63,100,-4,0,2026-03-21,AEML,Mundra SEZ,Low,Open
+10,Total Dangerous occurance,SAFEX I&M Module,(Total/raised)*100,77,100,0,0,2026-03-25,Cements,Ahmedabad,Medium,In Progress
+11,Total Property damage,SAFEX GOVERNANCE Module,Direct Value,88,100,-3,0,2026-03-24,MSPVL,Kandla,High,In Progress
+12,Fatality rate,SAFEX Training Tracker Module,Direct Value,53,100,-7,0,2026-03-23,AEML,Kandla,High,Open
+13,LTIFR,SAFEX SI/SRFA Module,(Total/raised)*100,66,100,13,0,2026-03-22,Copper,Mumbai HQ,Critical,In Progress
+14,LTISR,SAFEX SI/SRFA Module,SAFEX formula,85,100,-3,0,2026-03-21,AEML,Kandla,Low,In Progress
+15,Repeat incident cases( cat- 0 to 5),SAFEX I&M Module,(Closed/Total)*100,60,100,-8,0,2026-03-25,Data Center,Kandla,High,Open
+16,Delta of Fatal incident,SAFEX Audit Module,Direct Value,89,100,10,1,2026-03-24,Green PVC,Mumbai HQ,High,In Progress
+17,Delta of  LTI count,SAFEX ATS Module,SAFEX formula,81,100,7,1,2026-03-23,Realty,Ahmedabad,High,In Progress
+18,Delta of Repeat incident count,Sharepoint,(Closed/Total)*100,53,100,8,1,2026-03-22,Gas,Hazira,High,Open
+19,Fatality vs CMP action Compliance,SAFEX GOVERNANCE Module,(Total/raised)*100,75,100,13,1,2026-03-21,Green PVC,Kandla,Medium,In Progress
+20,LTI vs CMP action Compliance,SAFEX I&M Module,SAFEX formula,91,100,-8,1,2026-03-25,Power,Hazira,High,Resolved
+21,Total CMP action Taken,SAFEX GOVERNANCE Module,(Closed/Total)*100,91,100,-2,1,2026-03-24,ANIL-Wind,Ahmedabad,High,Resolved
+22,CMP action catergory wise,Manual / CMP Module,Direct value,56,100,-6,1,2026-03-23,Data Center,Raipur,Critical,Open
+23,Total Vehicle incident,SAFEX Training Tracker Module,Manual calculation,59,100,14,1,2026-03-22,Defense & Aerospace,Mundra SEZ,Critical,Open
+24,Vehicle incident rate,Kronos,(Total/raised)*100,58,100,0,1,2026-03-21,Ports,Raipur,Medium,Open
+25,Vehicle Incident,SAFEX SI/SRFA Module,Direct value,90,100,15,1,2026-03-25,Realty,Raipur,Medium,Resolved
+26,Accident free period( Best),SAFEX SI/SRFA Module,SAFEX formula,86,100,-4,1,2026-03-24,Power,Ahmedabad,Low,In Progress
+27,Incident Investigation,Sharepoint,Manual calculation,74,100,13,1,2026-03-23,AESL,Kandla,Critical,In Progress
+28,Leadership Rounds,Manual / CMP Module,(Total/raised)*100,62,100,10,1,2026-03-22,MSPVL,Kandla,Medium,Open
+29,No.  LTI,SAFEX GOVERNANCE Module,(Total/raised)*100,72,100,15,1,2026-03-21,Defense & Aerospace,Mundra SEZ,Medium,In Progress
+30,No.  MTC,SAFEX ATS Module,Direct Value,55,100,-7,1,2026-03-25,Data Center,Mumbai HQ,High,Open
+31,No.  RWC,SAFEX SI/SRFA Module,(Total/raised)*100,93,100,-3,2,2026-03-24,Copper,Mumbai HQ,Medium,Resolved
+32,No. FAC,SAFEX I&M Module,Direct value,96,100,6,2,2026-03-23,Cements,Mumbai HQ,Critical,Resolved
+33,No. Fatality,SAFEX PTW Module,Direct value,81,100,2,2,2026-03-22,Copper,Ahmedabad,Critical,In Progress
+34,No. Near Miss,Sharepoint,(Total/raised)*100,77,100,6,2,2026-03-21,Green Energy,Mumbai HQ,Critical,In Progress
+35,Total safe man hrs,Manual / CMP Module,Direct Value,68,100,12,2,2026-03-25,Data Center,Kandla,High,In Progress
+36,Safe Man Hrs,Kronos,SAFEX formula,71,100,16,2,2026-03-24,Defense & Aerospace,Kandla,Low,In Progress
+37,Total Man hrs ( Employee),SAFEX ATS Module,SAFEX formula,75,100,13,2,2026-03-23,RMRW,Raipur,High,In Progress
+38,Total Man hrs ( Contractor),Kronos,(Total/raised)*100,83,100,6,2,2026-03-22,Gas,Hazira,Medium,In Progress
+39,Total training conducted,SAFEX I&M Module,Manual calculation,67,100,-2,2,2026-03-21,Power,Ahmedabad,Medium,In Progress
+40,Training intensity Rate,SAFEX Audit Module,Manual calculation,78,100,2,2,2026-03-25,Power,Ahmedabad,Medium,In Progress
+41,Frontline worker training index,SAFEX SI/SRFA Module,Manual calculation,83,100,7,2,2026-03-24,Green Energy,Hazira,Critical,In Progress
+42,Training %,Kronos,(Total/raised)*100,53,100,13,2,2026-03-23,Defense & Aerospace,Mumbai HQ,Medium,Open
+43,Lost time days,SAFEX Training Tracker Module,(Closed/Total)*100,83,100,-4,2,2026-03-22,AESL,Kandla,Low,In Progress
+44,"SI, SRFA (4S/5S Closure)",Manual / CMP Module,Direct Value,78,100,7,2,2026-03-21,Cements,Mundra SEZ,Low,In Progress
+45,Hazard spotting,Manual / CMP Module,SAFEX formula,69,100,15,2,2026-03-25,Copper,Mundra SEZ,Low,In Progress
+46,Fatality Potential (4s & 5s) hazard %,Sharepoint,Direct Value,83,100,10,3,2026-03-24,Agri fresh,Ahmedabad,High,In Progress
+47,Total Audit Conducted,SAFEX SI/SRFA Module,(Total/raised)*100,76,100,6,3,2026-03-23,Defense & Aerospace,Kandla,Critical,In Progress
+48,Audit closure %,SAFEX I&M Module,SAFEX formula,95,100,16,3,2026-03-22,Logistics,Mumbai HQ,Low,Resolved
+49,Total Open Audit,SAFEX ATS Module,Direct Value,80,100,9,3,2026-03-21,ANIL-Wind,Ahmedabad,High,In Progress
+50,Hazards closure %,SAFEX GOVERNANCE Module,Direct Value,63,100,-6,3,2026-03-25,Hydro PSP,Mumbai HQ,High,Open
+51,S-4 SI Closure %,Sharepoint,Manual calculation,68,100,3,3,2026-03-24,Green PVC,Mundra SEZ,Critical,In Progress
+52,S-5 SI Closure %,SAFEX GOVERNANCE Module,SAFEX formula,72,100,1,3,2026-03-23,Data Center,Mumbai HQ,Low,In Progress
+53,S-4 SRFA Closure %,SAFEX ATS Module,Manual calculation,63,100,1,3,2026-03-22,RMRW,Raipur,Critical,Open
+54,S-5 SRFA Closure %,SAFEX GOVERNANCE Module,SAFEX formula,87,100,10,3,2026-03-21,ANIL-Wind,Mumbai HQ,Low,In Progress
+55,Observation per SI round,SAFEX SI/SRFA Module,(Closed/Total)*100,68,100,9,3,2026-03-25,AEML,Mumbai HQ,Low,In Progress
+56,Safety Walkthrough by Senior leadership Team,SAFEX ATS Module,SAFEX formula,65,100,3,3,2026-03-24,Hydro PSP,Ahmedabad,Low,In Progress
+57,Investigations Closure %,SAFEX PTW Module,(Closed/Total)*100,75,100,1,3,2026-03-23,Smart Meters,Hazira,High,In Progress
+58,Mock Drill Observation  closure %,SAFEX Audit Module,(Closed/Total)*100,71,100,3,3,2026-03-22,ANIL-Wind,Ahmedabad,Low,In Progress
+59,Safety Inspection Observation closure %,Kronos,Manual calculation,74,100,14,3,2026-03-21,MSPVL,Raipur,Critical,In Progress
+60,Total FPSA conducted,SAFEX I&M Module,Direct Value,95,100,3,3,2026-03-25,Defense & Aerospace,Ahmedabad,High,Resolved
+61,PTW compliance,SAFEX PTW Module,Direct Value,71,100,11,4,2026-03-24,Smart Meters,Mundra SEZ,Low,In Progress
+62,PTW Closure %,SAFEX I&M Module,(Total/raised)*100,83,100,13,4,2026-03-23,AEML,Ahmedabad,Critical,In Progress
+63,PTW Cancel %,SAFEX I&M Module,(Closed/Total)*100,58,100,12,4,2026-03-22,Copper,Mundra SEZ,High,Open
+64,Standard Implementation %,SAFEX ATS Module,SAFEX formula,76,100,8,4,2026-03-21,Cements,Mundra SEZ,Low,In Progress
+65,Standard & OHS Directives Implementation,SAFEX Audit Module,Direct value,61,100,5,4,2026-03-25,RMRW,Ahmedabad,Medium,Open
+66,Action closure %,SAFEX PTW Module,(Closed/Total)*100,58,100,13,4,2026-03-24,Data Center,Mundra SEZ,Low,Open
+67,Incident Key Learning implementation %,Kronos,(Closed/Total)*100,73,100,14,4,2026-03-23,Smart Meters,Kandla,High,In Progress
+68,Incident vs Training rate,Kronos,Manual calculation,83,100,-6,4,2026-03-22,Smart Meters,Hazira,Medium,In Progress
+69,Business Safety Council Meeting,Manual / CMP Module,Direct Value,63,100,11,4,2026-03-21,Smart Meters,Raipur,Low,Open
+70,6 Taskforce governance meeting,SAFEX Audit Module,(Total/raised)*100,60,100,12,4,2026-03-25,MSPVL,Hazira,Medium,Open
+71,SAFEX Utilization,SAFEX GOVERNANCE Module,Direct value,68,100,15,4,2026-03-24,Airports,Hazira,Critical,In Progress
+72,FRC compliance Rate,Manual / CMP Module,(Closed/Total)*100,89,100,8,4,2026-03-23,Smart Meters,Raipur,Low,In Progress
+73,LFI Compliance Rate,SAFEX Training Tracker Module,Direct Value,76,100,-3,4,2026-03-22,ANIL-Wind,Mundra SEZ,Low,In Progress
+74,% Safety Budget consumption,SAFEX SI/SRFA Module,Direct value,85,100,1,4,2026-03-21,NMDPL,Mumbai HQ,Critical,In Progress
+75,Safety Budget,SAFEX I&M Module,(Total/raised)*100,93,100,15,4,2026-03-25,Power,Ahmedabad,Critical,Resolved

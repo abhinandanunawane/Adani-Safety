@@ -1,0 +1,31 @@
+PageNo,PageName,Section,VisualType,Title,X,Y,W,H,FieldsHint
+1,Page 1 - MIS Incident & Leading Indicators,KPI zone,Card new x15,KPI grid (5x3),196,108,816,200,KPIName + KPI Value + trend; filter each card to one KPI from mis_kpi_by_page
+1,Page 1 - MIS Incident & Leading Indicators,Charts,Line chart,Leading indicators trend,196,318,300,168,Date; Value; KPIName or BU in legend
+1,Page 1 - MIS Incident & Leading Indicators,Charts,Donut chart,Mix by severity or category,502,318,160,168,Severity; Count
+1,Page 1 - MIS Incident & Leading Indicators,Charts,Clustered column,By BU or source,670,318,160,168,BusinessUnit; Value
+1,Page 1 - MIS Incident & Leading Indicators,Charts,Funnel,Incident lifecycle proxy,838,318,174,168,Status; Count
+1,Page 1 - MIS Incident & Leading Indicators,Table,Table,MIS detail scroll,196,492,816,216,KPI fields + LastUpdate
+2,Page 2 - MIS CMP Deltas & Vehicle,KPI zone,Card new x15,KPI grid,196,108,816,200,Same pattern as P1
+2,Page 2 - MIS CMP Deltas & Vehicle,Charts,Funnel,CMP / closure funnel,196,318,280,180,Status or stage; Count
+2,Page 2 - MIS CMP Deltas & Vehicle,Charts,Horizontal bar,Top variance KPIs,484,318,280,180,KPIName; Delta or Value
+2,Page 2 - MIS CMP Deltas & Vehicle,Charts,Donut chart,Vehicle / CMP split,772,318,240,180,Category; Count
+2,Page 2 - MIS CMP Deltas & Vehicle,Table,Table,Detail,196,502,816,206,Same
+3,Page 3 - MIS Training & Man-Hours,KPI zone,Card new x15,KPI grid,196,108,816,200,Same
+3,Page 3 - MIS Training & Man-Hours,Charts,Matrix heatmap,Training x Site,196,318,400,188,Rows Site; Columns KPI group; CF heatmap
+3,Page 3 - MIS Training & Man-Hours,Charts,Line chart,Hours & training trend,604,318,408,188,Date; Value
+3,Page 3 - MIS Training & Man-Hours,Table,Table,Detail,196,502,816,206,Same
+4,Page 4 - MIS Audit Hazard & Observations,KPI zone,Card new x15,KPI grid,196,108,816,200,Same
+4,Page 4 - MIS Audit Hazard & Observations,Charts,Filled map,India / region heatmap,196,318,320,188,Region; Value
+4,Page 4 - MIS Audit Hazard & Observations,Charts,Donut chart,Audit status,524,318,240,188,Status; Count
+4,Page 4 - MIS Audit Hazard & Observations,Charts,Column chart,Closure by BU,774,318,238,188,BU; Value
+4,Page 4 - MIS Audit Hazard & Observations,Table,Table,Detail,196,502,816,206,Same
+5,Page 5 - MIS PTW Standards & Governance,KPI zone,Card new x15,KPI grid,196,108,816,200,Same
+5,Page 5 - MIS PTW Standards & Governance,Charts,Gauge,Overall governance index,196,318,260,188,Value vs Target
+5,Page 5 - MIS PTW Standards & Governance,Charts,Column chart,Standards / PTW by BU,464,318,280,188,BU; Value
+5,Page 5 - MIS PTW Standards & Governance,Charts,Donut chart,Program mix,752,318,260,188,Category; Count
+5,Page 5 - MIS PTW Standards & Governance,Table,Table,Detail,196,502,816,206,Same
+6,Page 6 - BSC Executive Scorecard,Section A,Multi-row card,Key elements + performance index + highest score,196,72,816,96,Measures: BSC Key Elements Count; BSC Performance Index; BSC Max Score
+6,Page 6 - BSC Executive Scorecard,Section B,Stacked bar 100% or Ribbon,Band distribution Group A Q1,196,176,400,200,RiskGroup=Group A; Quarter; Band; Count or %
+6,Page 6 - BSC Executive Scorecard,Section B,Stacked bar 100% or Ribbon,Band distribution Group B Q1,604,176,408,200,RiskGroup=Group B; Quarter; Band
+6,Page 6 - BSC Executive Scorecard,Section C,Scatter or Lollipop combo,Unit rank vs weighted score,196,384,816,300,UnitName; Y=WeightedScore; size=Percentile; tooltip Rank Group Weight Overall
+6,Page 6 - BSC Executive Scorecard,Section C,Decomposition tree,Optional drill,196,384,816,300,Alternative drill from BU to KPI

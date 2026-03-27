@@ -1,0 +1,1183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adani Group Safety — MIS + BSC Dashboard</title>
+  <!-- Adani Brand Manual (Aug 2025): primary typeface Adani; system fallback Arial. Font files in prototype/fonts/ optional. -->
+  <style>
+    @font-face{
+      font-family:'Adani Sans';
+      font-style:normal;font-weight:400;font-display:swap;
+      src:local('Adani Sans'),url('fonts/AdaniSans-Regular.woff2') format('woff2'),url('fonts/AdaniSans-Regular.woff') format('woff');
+    }
+    @font-face{
+      font-family:'Adani Sans';
+      font-style:normal;font-weight:700;font-display:swap;
+      src:local('Adani Sans Bold'),url('fonts/AdaniSans-Bold.woff2') format('woff2'),url('fonts/AdaniSans-Bold.woff') format('woff');
+    }
+    :root{
+      /* Unit colours + font colour palette — Adani Brand Manual (Aug 2025) */
+      --brand-green:#00B16B; --brand-blue:#006DB6; --brand-purple:#8E278F; --brand-orange:#F04C23;
+      --brand-cyan:#0ca6d5; --brand-magenta:#cf3f79;
+      --ink:#231F20; --ink-muted:#6D6E71; --ink-headline:#8E278F; --bg:#e8eef6; --surface:#ffffff; --border:#c5d4e3;
+      --nav-bg:#e8f2fa; --nav-border:#b8d4ea;
+      --neutral-50:#f8fafc; --neutral-100:#f1f5f9; --neutral-200:#e2e8f0; --neutral-300:#cbd5e1;
+      --perf-green:#15803d; --perf-green-soft:#dcfce7; --perf-amber:#d97706; --perf-amber-soft:#fef3c7;
+      --perf-red:#b91c1c; --perf-red-soft:#fee2e2; --perf-orange:#ea580c;
+      --status-open-bg:#fff1f2; --status-open-text:#9f1239; --status-open-border:#fda4af;
+      --status-ip-bg:#fffbeb; --status-ip-text:#b45309; --status-ip-border:#fcd34d;
+      --status-res-bg:#ecfdf5; --status-res-text:#047857; --status-res-border:#6ee7b7;
+      --shadow-sm:0 1px 2px rgba(15,23,42,.06);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Adani Sans',Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:center;min-height:100vh}
+    .canvas{width:100%;max-width:1366px;height:720px;background:#f0f5fb;display:flex;overflow:hidden;box-shadow:0 8px 32px rgba(15,23,42,.08);padding:0 10px}
+    .sidebar{width:220px;background:var(--nav-bg);color:var(--ink);border-right:1px solid var(--nav-border);padding:8px 8px;transition:width .25s ease;overflow:hidden;flex-shrink:0}
+    .canvas.nav-collapsed .sidebar{width:0;padding:0}
+    .logo-wrap{padding:10px 8px 12px;text-align:center;background:#fff;border-radius:10px;margin:4px 2px 8px;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+    .logo-wrap img{width:148px;height:auto;display:block;margin:0 auto}
+    .logo-fallback{font-size:26px;font-weight:800;color:var(--brand-purple);letter-spacing:-0.02em}
+    .nav-title{font-size:9px;color:var(--ink-muted);letter-spacing:.3px;margin:4px 0 2px 6px;font-weight:700;text-transform:uppercase}
+    .sbtn{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--ink);margin:3px 0;cursor:pointer;text-align:left;font-size:10.5px;line-height:1.2;transition:.15s;box-shadow:var(--shadow-sm)}
+    .sbtn:hover{background:#f1f5f9;border-color:#94a3b8}
+    .sbtn.active{background:var(--brand-blue);border-color:var(--brand-blue);color:#fff;font-weight:700}
+    .main{flex:1;display:flex;flex-direction:column;padding:6px 8px;gap:5px;overflow:hidden;min-width:0;min-height:0}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--brand-blue);padding:6px 10px;border-radius:8px;color:#fff;box-shadow:var(--shadow-sm);flex-shrink:0}
+    .topbar__left{display:flex;align-items:center;gap:8px;min-width:0}
+    .toggle{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:#fff;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:14px}
+    #pageTitle{font-size:13px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .topbar__clock{font-size:10px;font-weight:600;opacity:.95;white-space:nowrap;text-align:right}
+    .filters{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;flex-shrink:0}
+    .filters input,.filters select{height:28px;padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface);font-size:10.5px}
+    .theme-hint{font-size:9px;color:var(--ink-muted);margin:0 0 0 2px;line-height:1.2;flex-shrink:0}
+    .content{display:flex;flex-direction:column;flex:1;min-height:0;gap:2px;overflow:hidden}
+    .kpi-band{flex:0 0 auto;padding:6px 2px 8px;border-bottom:1px solid var(--neutral-200);margin-bottom:2px;background:var(--surface)}
+    .kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px 6px;align-content:start;justify-items:stretch}
+    .kpis.k15{grid-auto-rows:auto}
+    .card--kpi{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:5px 6px 7px;margin:0;border:1px solid var(--neutral-200);border-radius:6px;background:var(--surface);box-shadow:var(--shadow-sm);cursor:pointer;transition:box-shadow .15s ease,border-color .15s ease,transform .15s ease;position:relative;min-width:0}
+    .card--kpi:hover{border-color:var(--neutral-300);box-shadow:0 2px 8px rgba(15,23,42,.08)}
+    .card--kpi.active{border-color:var(--brand-blue);box-shadow:0 0 0 1px var(--brand-blue)}
+    .card--kpi.active::after{content:'';position:absolute;left:6px;right:6px;bottom:4px;height:2px;background:var(--brand-blue);border-radius:1px}
+    .card--kpi-exec-title{font-family:inherit;font-size:9.5px;font-weight:700;color:var(--ink);line-height:1.2;margin:0 0 2px;max-height:2.4em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical}
+    .card--kpi-exec-curr{font-family:inherit;font-size:7px;color:var(--ink-muted);line-height:1.25;margin:0}
+    .card--kpi-exec-delta{font-family:inherit;font-size:7.5px;color:var(--ink-muted);line-height:1.3;margin:4px 0 2px}
+    .card--kpi-exec-delta strong{color:var(--ink);font-weight:700}
+    .card--kpi-exec-mid{display:flex;flex-direction:row;align-items:center;gap:5px;margin:0;flex-wrap:nowrap;min-width:0}
+    .card--kpi-exec-pct{font-family:inherit;font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-0.03em;line-height:1;flex-shrink:0}
+    .card--kpi-exec-tri{flex-shrink:0;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}
+    .card--kpi-exec-tri--up{border-bottom:9px solid #16a34a;margin-top:2px}
+    .card--kpi-exec-tri--up-bad{border-bottom:9px solid #dc2626;margin-top:2px}
+    .card--kpi-exec-tri--down{border-top:9px solid #dc2626;margin-bottom:2px}
+    .card--kpi-exec-tri--good-down{border-top:9px solid #16a34a;margin-bottom:2px}
+    .card--kpi-exec-prev{font-family:inherit;font-size:7.5px;color:var(--ink-muted);line-height:1.25;margin:2px 0 0}
+    .trend.up{color:var(--perf-green)}.trend.down{color:var(--perf-red)}
+    .charts{display:grid;gap:4px;flex:0 0 auto;min-height:0;align-content:start}
+    .charts.layout-a{grid-template-columns:repeat(4,1fr)}
+    .charts.layout-b{grid-template-columns:repeat(3,1fr)}
+    .charts.layout-c{grid-template-columns:1fr 1fr}
+    .charts.layout-d{grid-template-columns:repeat(3,1fr)}
+    .charts.layout-e{grid-template-columns:repeat(3,1fr)}
+    .panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:3px 5px 4px;min-height:0;flex:1;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;box-shadow:var(--shadow-sm)}
+    .charts .panel--chart{height:96px;min-height:96px;max-height:96px;flex:1 1 0}
+    .panel--chart{justify-content:flex-start}
+    .ptitle{font-size:8px;font-weight:700;color:var(--ink);margin:0 0 1px;line-height:1.15;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .chart-body{display:flex;flex-direction:column;gap:1px;align-items:stretch;justify-content:flex-start;flex:1 1 0;min-height:0;overflow:hidden}
+    .chart-body--tight{padding:0}
+    .chart-body--fill{flex:1 1 0;min-height:0}
+    .chart-viewport-wrap{position:relative;flex:1 1 0;min-height:0;display:flex;flex-direction:column}
+    .chart-zoom-tools{position:absolute;top:0;right:0;z-index:3;display:flex;gap:2px}
+    .chart-zoom-tools button{width:18px;height:16px;padding:0;border:1px solid var(--neutral-200);border-radius:3px;background:#fff;font-size:11px;font-weight:800;line-height:1;color:var(--brand-blue);cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,.08)}
+    .chart-zoom-tools button:hover{background:var(--neutral-50);border-color:var(--brand-blue)}
+    .chart-viewport{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:transform .15s ease-out;transform-origin:center center}
+    .chart-viewport > svg,.chart-viewport .chart-fill-svg{width:100%;height:100%;max-height:100%;display:block;object-fit:contain}
+    .chart-viewport .chart-map-root{max-height:100%!important;width:100%;flex:1;min-height:0}
+    .chart-viewport .map-panel-inner{min-height:0!important;max-height:100%!important;height:100%!important}
+    .chart-viewport .map-svg-wrap{min-height:0!important;max-height:100%!important}
+    .chart-body > svg,.chart-body .chart-fill-svg{width:100%;flex:1 1 0;height:auto;min-height:0;max-height:100%;display:block}
+    .chart-body--fill .chart-row{flex:1;min-height:0;display:flex;align-items:stretch}
+    .chart-body--fill .pie-wrap{flex:1;min-height:80px;max-height:none}
+    .chart-row{display:flex;gap:6px;align-items:center;flex:1;min-height:0;justify-content:center}
+    .pie-wrap{flex:0 0 40%;display:flex;align-items:center;justify-content:center;min-height:56px;max-height:72px}
+    .pie-svg{width:100%;max-height:72px}
+    .legend-v__row{display:flex;align-items:center;gap:5px;justify-content:center}
+    .legend-v__sw{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+    .legend-v__row strong{color:var(--ink);font-weight:700}
+    .line-svg{width:100%;min-height:72px;max-height:100px;height:auto;flex:1}
+    .combo-svg{width:100%;min-height:0;max-height:100%;height:100%;flex:1 1 0}
+    .chart-axis-label{font-size:8.5px;fill:#334155;font-weight:600}
+    .chart-y-tick{font-size:8px;fill:#475569}
+    .combo-bars{opacity:.9}
+    .line-legend,.funnel-legend,.gauge-legend,.map-legend{display:flex;flex-wrap:wrap;gap:4px 8px;font-size:7px;margin:0;padding:0;color:var(--ink-muted);justify-content:center;text-align:center;width:100%;align-items:center;line-height:1.15;flex-shrink:0;max-height:14px;overflow:hidden}
+    .line-legend span{display:inline-flex;align-items:center;gap:4px}
+    .legend-v{display:flex;flex-direction:column;gap:3px;font-size:8.5px;color:var(--ink-muted);align-items:center;text-align:center;width:100%}
+    .bars{flex:1;min-height:96px;display:flex;align-items:flex-end;gap:4px;padding:0 2px 18px;position:relative}
+    .bars .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0}
+    .bars .bar-col .bar-pill{width:100%;max-width:28px;border-radius:4px 4px 0 0;background:var(--brand-blue);min-height:4px;transition:opacity .15s}
+    .bars .bar-col .bar-lbl{font-size:7px;color:var(--ink-muted);margin-top:2px;text-align:center;line-height:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}
+    .bars-h{flex:1;min-height:96px;display:flex;flex-direction:column;gap:4px;justify-content:center;padding-right:4px}
+    .bars-h .bh-row{display:flex;align-items:center;gap:6px;font-size:8px}
+    .bars-h .bh-row .bh-name{flex:0 0 38%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#334155}
+    .bars-h .bh-track{flex:1;height:10px;background:var(--neutral-200);border-radius:5px;overflow:hidden}
+    .bars-h .bh-fill{height:100%;border-radius:5px;background:var(--brand-purple)}
+    .funnel{display:flex;flex-direction:column;gap:4px;padding:2px;flex:1;min-height:96px;justify-content:center}
+    .fz{height:12px;clip-path:polygon(6% 0,94% 0,88% 100%,12% 100%);background:var(--brand-blue)}
+    .fz:nth-child(2){width:90%;margin:0 auto}.fz:nth-child(3){width:76%;margin:0 auto}.fz:nth-child(4){width:62%;margin:0 auto}.fz:nth-child(5){width:48%;margin:0 auto}
+    .heat{flex:1;min-height:96px;display:grid;grid-template-columns:repeat(10,1fr);gap:2px;align-content:center}
+    .heat div{border-radius:2px;height:14px;border:1px solid var(--neutral-300)}
+    .heat div[data-level='1']{background:rgba(12,166,213,.22)}.heat div[data-level='2']{background:rgba(28,111,203,.26)}
+    .heat div[data-level='3']{background:rgba(107,63,193,.28)}.heat div[data-level='4']{background:rgba(207,63,121,.32)}
+    .chart-map-root{display:flex;flex-direction:column;flex:1 1 0;min-height:0;width:100%}
+    .map-panel-inner{position:relative;flex:1 1 0;min-height:0;overflow:hidden;border-radius:4px;border:1px solid var(--border);background:#e8f4fc}
+    .map-zoom{display:flex;gap:4px;position:absolute;top:4px;right:4px;z-index:2}
+    .map-zoom button{width:22px;height:22px;border-radius:4px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:800;font-size:12px;line-height:1;color:var(--brand-blue)}
+    .map-svg-wrap{width:100%;height:100%;min-height:0;max-height:100%;transform-origin:center center;transition:transform .12s ease-out}
+    .map-svg{width:100%;height:100%;display:block}
+    .map-svg .state{fill:#dbeafe;fill-opacity:0.92;stroke:#1e40af;stroke-width:0.55;transition:fill .15s;cursor:pointer}
+    .map-svg .state:hover{fill:#93c5fd;fill-opacity:1}
+    .map-svg .india-outline{fill:#bfdbfe;stroke:#1e3a8a;stroke-width:0.8}
+    .map-legend{font-size:8px;display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;color:var(--ink-muted)}
+    .map-legend span{display:inline-flex;align-items:center;gap:3px}
+    .map-dot{width:7px;height:7px;border-radius:50%}
+    .gauge{flex:1;min-height:96px;display:flex;align-items:center;justify-content:center;position:relative}
+    .gauge .gauge-svg-wrap{position:relative;width:72px;height:72px;display:flex;align-items:center;justify-content:center}
+    .gauge .txt{position:absolute;font-weight:800;color:var(--ink);font-size:13px;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+    .gauge-legend{font-size:8px;text-align:center;color:var(--ink-muted);margin-top:2px}
+    .table-panel{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 5px 4px;flex:1 1 0;min-height:0;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-sm);margin-top:2px}
+    .table-panel .ptitle{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .table-scroll{overflow:auto;flex:1;min-height:0;border:1px solid var(--neutral-200);border-radius:6px;background:var(--neutral-50)}
+    .data-table{width:100%;border-collapse:separate;border-spacing:0;font-size:9px}
+    .data-table th,.data-table td{padding:4px 5px;border-bottom:1px solid var(--neutral-200);text-align:left;vertical-align:middle}
+    .data-table th{position:sticky;top:0;background:#dce8f5;z-index:1;font-weight:700;color:var(--ink);font-size:8.5px}
+    .data-table tbody tr:nth-child(even){background:rgba(255,255,255,.6)}
+    .data-table tbody tr:hover{background:#eff6ff}
+    .td-kpi{font-weight:600;color:var(--ink);max-width:140px}
+    .td-trend{min-width:88px}
+    .trend-cell{display:flex;align-items:center;gap:6px}
+    .trend-bar{flex:1;height:6px;background:var(--neutral-200);border-radius:3px;overflow:hidden;min-width:40px}
+    .trend-bar > span{display:block;height:100%;border-radius:3px;background:var(--brand-blue)}
+    .trend-pct{font-size:8px;font-weight:700;color:#334155;white-space:nowrap}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:8px;font-weight:700}
+    .pill--open{background:var(--status-open-bg);color:var(--status-open-text);border:1px solid var(--status-open-border)}
+    .pill--ip{background:var(--status-ip-bg);color:var(--status-ip-text);border:1px solid var(--status-ip-border)}
+    .pill--res{background:var(--status-res-bg);color:var(--status-res-text);border:1px solid var(--status-res-border)}
+    .tooltip{position:fixed;pointer-events:none;z-index:9999;background:rgba(15,23,42,.94);color:#fff;padding:6px 8px;border-radius:6px;font-size:10px;transform:translate(10px,10px);max-width:280px;display:none;line-height:1.35}
+    /* BSC */
+    .bsc-wrap{display:none;flex-direction:column;gap:3px;min-height:0;overflow:hidden;flex:1}
+    .bsc-wrap.active{display:flex;flex:1;min-height:0}
+    .mis-wrap{display:flex;flex-direction:column;gap:3px;min-height:0;flex:1;overflow:hidden}
+    .mis-wrap.hidden{display:none}
+    .bsc-hero{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+    .bsc-hero h2{margin:0;font-size:10px;color:var(--ink-muted);font-weight:700}
+    .bsc-hero-row-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+    .bsc-hero-row-persp{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:2px}
+    .hero-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 4px;text-align:center;min-height:0}
+    .hero-card.hero-high{border-color:var(--brand-blue);box-shadow:0 0 0 1px rgba(0,109,182,.25)}
+    .hero-card h3{margin:0 0 2px;font-size:8px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.03em;line-height:1.15}
+    .hero-card .big{font-size:20px;font-weight:800;color:var(--ink-headline)}
+    .hero-card .big.grad{color:var(--ink-headline)}
+    .hero-card.hero-high .big{font-size:24px}
+    .hero-card .sub{font-size:8px;color:var(--ink-muted);margin-top:2px;line-height:1.15}
+    .hero-card .pct-note{font-size:7px;color:var(--brand-blue);font-weight:600;margin-top:2px}
+    .bsc-rag-strip{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;padding:6px 8px;background:#f1f5f9;border:1px solid var(--border);border-radius:6px;font-size:8px;color:var(--ink);flex-shrink:0;white-space:nowrap}
+    .bsc-rag-strip .lab{font-weight:800;color:#0f172a;margin-right:4px}
+    .bsc-rag-strip .sep{color:#94a3b8;font-weight:300}
+    .rag-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:8px;font-weight:600}
+    .rag-chip.g{background:#dcfce7;color:#14532d;border:1px solid #86efac}
+    .rag-chip.a{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
+    .rag-chip.r{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+    .bsc-bands-row{display:grid;grid-template-columns:1fr 1fr;gap:4px;min-height:0;flex:0 0 auto}
+    .band-panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:4px}
+    .band-panel--a{border-top:3px solid var(--neutral-300)}
+    .band-panel--b{border-top:3px solid var(--neutral-300)}
+    .band-hdr{font-size:10px;font-weight:800;margin:0;padding:6px 8px;border-radius:6px;text-align:center;letter-spacing:.02em}
+    .band-hdr--a{background:#fecaca;color:#7f1d1d}
+    .band-hdr--b{background:#fde68a;color:#78350f}
+    .bu-chip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+    .bu-chip{padding:6px 4px;text-align:center;font-size:8.5px;font-weight:700;border-radius:6px;border:1px solid var(--border);background:#fff;color:#0f172a;line-height:1.15;box-shadow:var(--shadow-sm)}
+    .band-panel--a .bu-chip{border-top:2px solid var(--neutral-200)}
+    .band-panel--b .bu-chip{border-top:2px solid var(--neutral-200)}
+    .band-stack{display:flex;flex-direction:column;gap:4px}
+    .band-row{display:flex;align-items:center;gap:6px;font-size:9px}
+    .band-row .lbl{width:28px;color:var(--ink-muted);flex-shrink:0}
+    .band-bar{flex:1;height:20px;border-radius:4px;background:var(--neutral-200);overflow:hidden;display:flex}
+    .band-bar span{height:100%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff}
+    .band-red{background:var(--perf-red)}.band-amb{background:var(--perf-amber)}.band-grn{background:var(--perf-green)}
+    .rag-legend{font-size:7.5px;line-height:1.35;color:var(--ink-muted);background:var(--neutral-50);padding:6px;border-radius:6px;border:1px dashed var(--border)}
+    .rag-legend strong{display:block;color:var(--ink);font-size:8px;margin-bottom:2px}
+    .rag-line{margin:2px 0;padding-left:8px;border-left:3px solid var(--neutral-300)}
+    .rag-line.g{border-left-color:var(--perf-green)}.rag-line.a{border-left-color:var(--perf-amber)}.rag-line.r{border-left-color:var(--perf-red)}
+    .bsc-rank{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 6px;flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-sm)}
+    .bsc-rank h4{margin:0 0 4px;font-size:10px;color:#1e293b}
+    .bsc-table-wrap{overflow:auto;flex:1;border:1px solid var(--neutral-200);border-radius:6px;background:#fff}
+    .bsc-table{width:100%;border-collapse:collapse;font-size:9px;text-align:center}
+    .bsc-table th,.bsc-table td{padding:5px 4px;border:1px solid var(--neutral-200);vertical-align:middle}
+    .bsc-table thead th{background:#fff;font-weight:800;color:#0f172a;font-size:8px}
+    .bsc-table tbody td{font-weight:600}
+    .bsc-table .cell-rank{font-weight:800;color:#fff}
+    .rk-1{background:#14532d;color:#fff!important}.rk-2{background:#166534;color:#fff!important}.rk-3{background:#22c55e;color:#14532d!important}
+    .rk-4{background:#eab308;color:#422006!important}.rk-5{background:#ca8a04;color:#422006!important}
+    .rk-6{background:#facc15;color:#713f12!important}.rk-7{background:#fb923c;color:#431407!important}
+    .rk-8{background:#f97316;color:#fff!important}.rk-9{background:#ea580c;color:#fff!important}.rk-10{background:#b91c1c;color:#fff!important}
+    .bsc-bar-cell{min-width:56px;padding:4px!important}
+    .bsc-bar-cell .bar-wrap{height:8px;background:var(--neutral-200);border-radius:4px;overflow:hidden}
+    .bsc-bar-cell .bar-fill{height:100%;background:var(--brand-blue);border-radius:4px}
+    .dual-kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:2px 4px;align-items:stretch}
+    .dual-kpi__cell{background:var(--neutral-50);border-radius:8px;padding:5px 4px;text-align:center;border:1px solid var(--border)}
+    .dual-kpi__lab{font-size:7px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+    .dual-kpi__num{font-size:18px;font-weight:800;color:var(--brand-blue);line-height:1.1}
+    .multi-kpi-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px 10px;flex:1 1 0;min-height:0;padding:2px 0;align-content:start}
+    .mk-card{background:transparent;border:none;border-radius:0;padding:3px 4px 5px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:0;cursor:default}
+    .mk-card .card--kpi-exec-title{font-size:8.5px}
+    .mk-card .card--kpi-exec-curr,.mk-card .card--kpi-exec-prev{font-size:6.5px}
+    .mk-card .card--kpi-exec-pct{font-size:13px}
+    .mk-card .card--kpi-exec-tri--up,.mk-card .card--kpi-exec-tri--up-bad,.mk-card .card--kpi-exec-tri--down,.mk-card .card--kpi-exec-tri--good-down{border-left-width:4px;border-right-width:4px}
+    .mk-card .card--kpi-exec-tri--up,.mk-card .card--kpi-exec-tri--up-bad{border-bottom-width:7px}
+    .mk-card .card--kpi-exec-tri--down,.mk-card .card--kpi-exec-tri--good-down{border-top-width:7px}
+    .power-kpi{display:flex;align-items:center;justify-content:center;gap:14px;padding:4px 8px;flex-wrap:wrap}
+    .power-kpi__big{font-size:22px;font-weight:800;color:var(--brand-blue);line-height:1}
+    .power-kpi__sub{font-size:8px;color:var(--ink-muted);margin-top:2px;text-align:center}
+    .power-kpi .gauge{min-height:48px;position:relative}
+    .power-kpi .gauge .gauge-svg-wrap{width:48px;height:48px;position:relative}
+    .power-kpi .gauge .txt{font-size:11px}
+    .table-heatmap{width:100%;border-collapse:collapse;font-size:8px}
+    .table-heatmap th,.table-heatmap td{border:1px solid var(--neutral-200);padding:3px 4px;text-align:center}
+    .table-heatmap thead th{background:var(--neutral-100);font-weight:700;color:#334155}
+    .hist-svg,.tornado-svg,.stream-svg,.mekko-svg{max-height:100%;width:100%}
+    .chart-fill-svg .chart-hover,.chart-fill-svg rect.chart-hover,.chart-fill-svg circle.chart-hover{cursor:pointer;transition:filter .2s ease,opacity .2s ease}
+    .chart-fill-svg .chart-hover:hover,.chart-fill-svg rect.chart-hover:hover,.chart-fill-svg circle.chart-hover:hover{filter:brightness(1.12) drop-shadow(0 2px 6px rgba(28,111,203,.35))}
+    .chart-fill-svg path.chart-hover{cursor:pointer;transition:filter .2s ease,opacity .2s ease}
+    .chart-fill-svg path.chart-hover:hover{filter:brightness(1.08) drop-shadow(0 2px 8px rgba(14,165,233,.4))}
+    .panel--chart:hover .chart-fill-svg .combo-line,.panel--chart:hover .combo-svg .combo-line{stroke-width:2.6;filter:drop-shadow(0 0 2px rgba(207,63,121,.45))}
+    .thm-cell{cursor:pointer;transition:transform .15s ease,filter .15s ease}
+    .thm-cell:hover{transform:scale(1.04);filter:brightness(1.08)}
+    .dual-kpi__cell{transition:transform .18s ease,box-shadow .18s ease}
+    .dual-kpi__cell:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(15,23,42,.1)}
+    .chart-body.chart-body--plain{gap:2px}
+    .dual-kpi,.power-kpi{flex:1 1 0;min-height:0;align-items:center}
+    .chart-body.chart-body--plain .table-heatmap td,.chart-body.chart-body--plain .table-heatmap th{padding:2px 3px}
+    .power-kpi{transition:background .2s ease}
+    .panel--chart:hover .power-kpi{background:rgba(248,250,252,.6)}
+  </style>
+</head>
+<body>
+<div class="canvas" id="canvas">
+  <aside class="sidebar">
+    <div class="logo-wrap">
+      <img src="assets/adani-logo.svg" alt="Adani" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='block';" />
+      <div id="logoFallback" class="logo-fallback" style="display:none">adani</div>
+    </div>
+    <div class="nav-title">MIS + BSC</div>
+    <button class="sbtn active" data-page="0">P1 — Incident &amp; leading</button>
+    <button class="sbtn" data-page="1">P2 — CMP &amp; vehicle</button>
+    <button class="sbtn" data-page="2">P3 — Training &amp; hours</button>
+    <button class="sbtn" data-page="3">P4 — Audit &amp; hazard</button>
+    <button class="sbtn" data-page="4">P5 — PTW &amp; governance</button>
+    <button class="sbtn" data-page="5">P6 — BSC executive</button>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar__left">
+        <button class="toggle" id="toggleNav" type="button" aria-label="Menu">☰</button>
+        <div id="pageTitle">Adani Group Safety — MIS + BSC</div>
+      </div>
+      <div class="topbar__clock" id="clockEl" title="Last refresh"></div>
+    </div>
+    <div class="filters" id="filterRow">
+      <input type="date" id="dateFilter" title="Date" />
+      <input type="date" id="lastUpdateFilter" title="Last Update" />
+      <select id="quarterFilter" title="Quarter"><option value="All">Quarter: All</option><option value="Q1 FY26">Q1 FY26</option><option value="Q2 FY26">Q2 FY26</option><option value="Q3 FY26">Q3 FY26</option><option value="Q4 FY26">Q4 FY26</option></select>
+      <select id="buFilter"><option value="All">BU: All</option></select>
+      <select id="siteFilter"><option value="All">Site: All</option><option value="Mumbai HQ">Mumbai HQ</option><option value="Mundra SEZ">Mundra SEZ</option><option value="Ahmedabad">Ahmedabad</option><option value="Raipur">Raipur</option><option value="Hazira">Hazira</option><option value="Kandla">Kandla</option></select>
+      <select id="severityFilter"><option value="All">Severity: All</option><option value="Critical">Critical</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>
+      <select id="statusFilter"><option value="All">Status: All</option><option value="Open">Open</option><option value="In Progress">In Progress</option><option value="Resolved">Resolved</option></select>
+    </div>
+    <p class="theme-hint" id="themeHint"></p>
+
+    <div class="mis-wrap" id="misWrap">
+      <div class="content">
+        <div class="kpi-band">
+          <section class="kpis k15" id="kpiGrid"></section>
+        </div>
+        <section class="charts" id="charts"></section>
+        <section class="table-panel">
+          <div class="ptitle"><span>KPI detail</span><span style="font-weight:500;color:var(--ink-muted);font-size:8px">Click a KPI card to highlight · scroll for more</span></div>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead><tr><th>KPI</th><th>Current</th><th>Target</th><th>Trend</th><th>Status</th><th>Last update</th><th>Owner</th></tr></thead>
+              <tbody id="tbl"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="bsc-wrap" id="bscWrap">
+      <section class="bsc-hero">
+        <h2>Balance scorecard — key elements (involvement % sums to 100%)</h2>
+        <div class="bsc-hero-row-metrics">
+          <div class="hero-card hero-high" data-tip="Peak normalized score across business units (YTD).">
+            <h3>Highest score achieved</h3>
+            <div class="big" id="bscHigh">94%</div>
+            <div class="sub">YTD peak · reference for portfolio</div>
+          </div>
+          <div class="hero-card" data-tip="Count of distinct parameters in the scorecard.">
+            <h3>Key elements (count)</h3>
+            <div class="big" id="bscKeyEl">48</div>
+            <div class="sub">Parameters tracked</div>
+          </div>
+          <div class="hero-card" data-tip="Weighted composite vs target band.">
+            <h3>Performance index</h3>
+            <div class="big" id="bscPerf">82</div>
+            <div class="sub">vs target band</div>
+          </div>
+        </div>
+        <div class="bsc-hero-row-persp" id="bscPerspRow"></div>
+      </section>
+      <section class="bsc-bands" style="display:flex;flex-direction:column;gap:5px;min-height:0">
+        <div class="bsc-rag-strip" title="Performance band (score)">
+          <span class="lab">Performance band (score)</span>
+          <span class="sep">|</span>
+          <span class="rag-chip g"><strong>Green</strong> (≥80): Strong performance and proactive safety culture — sustain.</span>
+          <span class="sep">|</span>
+          <span class="rag-chip a"><strong>Amber</strong> (≥65 &amp; &lt;80): Moderate performance — improve to excel.</span>
+          <span class="sep">|</span>
+          <span class="rag-chip r"><strong>Red</strong> (&lt;65): Below expectations — immediate attention.</span>
+        </div>
+        <div class="bsc-bands-row">
+          <div class="band-panel band-panel--a">
+            <div class="band-hdr band-hdr--a">High risk BU group (Group A)</div>
+            <div class="bu-pairs" id="buPairsA"></div>
+            <div class="band-stack" id="bandGroupA"></div>
+          </div>
+          <div class="band-panel band-panel--b">
+            <div class="band-hdr band-hdr--b">Moderate risk BU group (Group B)</div>
+            <div class="bu-pairs" id="buPairsB"></div>
+            <div class="band-stack" id="bandGroupB"></div>
+          </div>
+        </div>
+      </section>
+      <section class="bsc-rank">
+        <h4>Balanced scorecard — BU ranking</h4>
+        <div class="bsc-table-wrap" id="bscLollipop"></div>
+      </section>
+    </div>
+  </main>
+</div>
+<div class="tooltip" id="tooltip"></div>
+<script src="mis-pages-data.js"></script>
+<script src="converter-mis-data.js"></script>
+<script>
+const BSC_PAGE = { name: 'Page 6 - BSC Executive Scorecard', type: 'bsc' };
+const pages = [...window.MIS_PAGE_DEF.map(p => ({ name: p.name, theme: p.theme, kpis: p.kpis })), BSC_PAGE];
+const pageUIs = [
+  { kpiCount: 15, tableRows: 15, chartLayout: 'layout-a', charts: ['combo','histogram','treemap','line_bar'] },
+  { kpiCount: 15, tableRows: 15, chartLayout: 'layout-b', charts: ['line_bar_m','variance_bars','dual_kpi'] },
+  { kpiCount: 15, tableRows: 15, chartLayout: 'layout-c', charts: ['stream','table_heatmap'] },
+  { kpiCount: 15, tableRows: 15, chartLayout: 'layout-d', charts: ['map','mekko','multi_kpi'] },
+  { kpiCount: 15, tableRows: 15, chartLayout: 'layout-e', charts: ['power_kpi','combo','line_bar'] }
+];
+const BU_OPTIONS = ['All','Power','Ports','AESL','Cements','Copper','Green PVC','Mining','Gas','Airports','MSPVL','Defense & Aerospace','ANIL-Wind','ANIL-BESS','Green Energy','Realty','RMRW','AEML','Data Center','Logistics','NMDPL','Smart Meters','Hydro PSP','Agri fresh','Dredging'];
+const BSC_PAIRS_A = ['Power','Ports','Cements','Copper','Green PVC','Mining','Gas','Airports','MSPVL','Defense & Aerospace','ANIL-Wind','ANIL-BESS'];
+const BSC_PAIRS_B = ['AESL','Green Energy','Realty','RMRW','AEML','Data Center','Logistics','NMDPL','Smart Meters','Hydro PSP','Agri fresh','Dredging'];
+const bscUnits = [
+  { u: 'BU1', grp: 'High Risk', raw: 92, rk: 1, pct: 100, w: 0.65, ws: 65, oa: 1 },
+  { u: 'BU2', grp: 'High Risk', raw: 88, rk: 2, pct: 80, w: 0.65, ws: 52, oa: 2 },
+  { u: 'BU3', grp: 'High Risk', raw: 78, rk: 3, pct: 60, w: 0.65, ws: 39, oa: 3 },
+  { u: 'BU4', grp: 'High Risk', raw: 70, rk: 4, pct: 40, w: 0.65, ws: 26, oa: 6 },
+  { u: 'BU5', grp: 'High Risk', raw: 65, rk: 5, pct: 20, w: 0.65, ws: 13, oa: 9 },
+  { u: 'BU6', grp: 'Moderate Risk', raw: 75, rk: 1, pct: 100, w: 0.35, ws: 35, oa: 4 },
+  { u: 'BU7', grp: 'Moderate Risk', raw: 68, rk: 2, pct: 80, w: 0.35, ws: 28, oa: 5 },
+  { u: 'BU8', grp: 'Moderate Risk', raw: 60, rk: 3, pct: 60, w: 0.35, ws: 21, oa: 7 },
+  { u: 'BU9', grp: 'Moderate Risk', raw: 55, rk: 4, pct: 40, w: 0.35, ws: 14, oa: 8 },
+  { u: 'BU10', grp: 'Moderate Risk', raw: 50, rk: 5, pct: 20, w: 0.35, ws: 7, oa: 10 }
+];
+let pageIdx = 0;
+let selectedKpi = '';
+let mapZoom = 1;
+const rows = [];
+const today = '2026-03-25';
+
+function hashSeed(s){ let h=2166136261; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619);} return h>>>0; }
+function stableVal(page, kpi, salt){ return 55 + (hashSeed(page+'|'+kpi+'|'+salt) % 40); }
+
+const UPDATES = ['2026-03-25','2026-03-24','2026-03-23','2026-03-22','2026-03-21'];
+function seedRowsFromConverter(){
+  const cm = window.CONVERTER_MIS && window.CONVERTER_MIS.master;
+  if (!cm || !cm.length) return false;
+  cm.forEach(function (m) {
+    rows.push({
+      page: m.page,
+      kpi: m.kpi,
+      value: m.value,
+      target: m.target,
+      delta: m.delta,
+      trend: m.trend,
+      status: m.status,
+      lastUpdate: m.lastUpdate,
+      owner: m.owner,
+      bu: m.bu,
+      site: m.site,
+      severity: m.severity
+    });
+  });
+  return true;
+}
+if (!seedRowsFromConverter()) {
+  window.MIS_PAGE_DEF.forEach((p, pi) => p.kpis.forEach((k, ix) => {
+    const base = stableVal(pi, k, 'v');
+    const jitter = (hashSeed(pi+k+ix+'j') % 7) - 3;
+    const value = Math.min(100, Math.max(12, base + jitter));
+    const target = 100;
+    const delta = (hashSeed(pi+k+'d') % 25) - 8;
+    const trend = delta >= 0 ? 'up' : 'down';
+    const bu = BU_OPTIONS[1 + (hashSeed(k+ix) % (BU_OPTIONS.length-1))];
+    const site = ['Mumbai HQ','Mundra SEZ','Ahmedabad','Raipur','Hazira','Kandla'][hashSeed(k) % 6];
+    const severity = ['Critical','High','Medium','Low'][hashSeed(k+pi) % 4];
+    let status = 'In Progress';
+    if (value >= 90) status = 'Resolved';
+    else if (value < 65) status = 'Open';
+    rows.push({
+      page: pi, kpi: k, value, target, delta, trend, status,
+      lastUpdate: UPDATES[ix % UPDATES.length],
+      owner: ix % 2 ? 'HSE Analytics' : 'BU Safety',
+      bu, site, severity
+    });
+  }));
+}
+
+(function fillBuFilter(){
+  const sel = document.getElementById('buFilter');
+  BU_OPTIONS.forEach(b => { if(b==='All') return; const o=document.createElement('option'); o.value=b; o.textContent=b; sel.appendChild(o); });
+})();
+
+function getKpiRow(k){
+  const last = (document.getElementById('lastUpdateFilter').value || '').trim();
+  const bu = (document.getElementById('buFilter').value || '').trim();
+  const site = (document.getElementById('siteFilter').value || '').trim();
+  const sev = (document.getElementById('severityFilter').value || '').trim();
+  const st = (document.getElementById('statusFilter').value || '').trim();
+  const base = rows.find(x => x.page === pageIdx && x.kpi === k);
+  if (!base) {
+    const v = stableVal(pageIdx, k, 'f');
+    return { kpi:k, value:v, target:100, delta:0, trend:'up', status:'In Progress', lastUpdate:today, owner:'HSE', bu:'', site:'', severity:'Medium' };
+  }
+  const match = (!last || base.lastUpdate === last)
+    && (bu === 'All' || bu === '' || base.bu === bu)
+    && (site === 'All' || site === '' || base.site === site)
+    && (sev === 'All' || sev === '' || base.severity === sev)
+    && (st === 'All' || st === '' || base.status === st);
+  if (match) return { ...base };
+  const n = 0.8 + (hashSeed((bu||'') + (site||'') + (last||'') + k) % 18) / 100;
+  const value = Math.min(100, Math.max(0, Math.round(base.value * n)));
+  const delta = Math.round(base.delta * n);
+  return { ...base, value, delta, trend: delta >= 0 ? 'up' : 'down' };
+}
+
+function setTooltip(el){
+  const tip = document.getElementById('tooltip');
+  if (!el) { tip.style.display='none'; return; }
+  const text = el.getAttribute('data-tip');
+  if (!text) { tip.style.display='none'; return; }
+  tip.textContent = text;
+  tip.style.display = 'block';
+}
+document.addEventListener('mousemove', (e) => {
+  const tip = document.getElementById('tooltip');
+  if (tip.style.display !== 'block') return;
+  tip.style.left = e.clientX + 'px';
+  tip.style.top = e.clientY + 'px';
+});
+document.addEventListener('mouseover', (e) => {
+  const t = e.target.closest('[data-tip]');
+  setTooltip(t);
+});
+document.addEventListener('mouseout', (e) => {
+  if (e.target.closest('[data-tip]')) setTooltip(null);
+});
+
+function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+/** Shared plot area for bar/line charts: Y = score 0–100, bottom baseline. */
+function chartYGrid(w, plotTop, plotBottom, plotLeft) {
+  const ticks = [0, 25, 50, 75, 100];
+  const plotH = plotBottom - plotTop;
+  let g = '';
+  ticks.forEach(t => {
+    const y = plotBottom - (t / 100) * plotH;
+    g += `<line x1="${plotLeft}" y1="${y}" x2="${w - 4}" y2="${y}" stroke="#e2e8f0" stroke-width="0.75"/>`;
+    g += `<text x="${plotLeft - 4}" y="${y + 3}" text-anchor="end" fill="#475569" font-size="8" font-weight="600">${t}</text>`;
+  });
+  const cy = (plotTop + plotBottom) / 2;
+  g += `<text x="9" y="${cy}" fill="#334155" font-size="8.5" font-weight="600" transform="rotate(-90 9 ${cy})" text-anchor="middle">Score (0–100)</text>`;
+  return g;
+}
+
+function filterNudge(){
+  let n = 1;
+  const qEl = document.getElementById('quarterFilter');
+  const q = qEl ? qEl.value : 'All';
+  if (q && q !== 'All') n *= 0.94 + (hashSeed(q) % 12) / 100;
+  const dEl = document.getElementById('dateFilter');
+  const dv = dEl && dEl.value;
+  if (dv) n *= 0.92 + (hashSeed('date|' + dv) % 15) / 100;
+  return Math.min(1.12, Math.max(0.8, n));
+}
+function withFilters(r){
+  const n = filterNudge();
+  const v0 = Number(r.value);
+  const d0 = Number(r.delta);
+  const value = Math.min(100, Math.max(0, Math.round((isFinite(v0) ? v0 : 0) * n)));
+  const delta = Math.round((isFinite(d0) ? d0 : 0) * n);
+  return { ...r, value, delta, trend: delta >= 0 ? 'up' : 'down' };
+}
+
+function kpiLabelMonthsFromLastUpdate(iso){
+  const d = iso ? new Date(String(iso).slice(0, 10) + 'T12:00:00') : new Date();
+  if (isNaN(d.getTime())) {
+    const now = new Date();
+    const cur = now.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+    const p = new Date(now);
+    p.setMonth(p.getMonth() - 1);
+    const prev = p.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+    return { cur, prev };
+  }
+  const cur = d.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+  const p = new Date(d);
+  p.setMonth(p.getMonth() - 1);
+  const prev = p.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+  return { cur, prev };
+}
+function kpiPriorScore(value, delta){
+  const v = Number(value);
+  const d = Number(delta);
+  return Math.min(100, Math.max(0, Math.round((isFinite(v) ? v : 0) - (isFinite(d) ? d : 0))));
+}
+function kpiExecInverseGoodDown(k){
+  const s = String(k || '').toLowerCase();
+  return /churn|reject rate|lag time|delay|fatal|injury|downtime|lost.?time|ltifr|trifr|exposure index|open incident/.test(s);
+}
+function execKpiTriClass(k, trend){
+  if (kpiExecInverseGoodDown(k)) {
+    if (trend === 'down') return 'card--kpi-exec-tri--good-down';
+    return 'card--kpi-exec-tri--up-bad';
+  }
+  return trend === 'up' ? 'card--kpi-exec-tri--up' : 'card--kpi-exec-tri--down';
+}
+function execKpiCardInner(mm, k){
+  const { cur, prev } = kpiLabelMonthsFromLastUpdate(mm.lastUpdate);
+  const curVal = Number(mm.value);
+  const prevVal = kpiPriorScore(mm.value, mm.delta);
+  const d = Number(mm.delta) || 0;
+  const deltaStr = (d >= 0 ? '+' : '') + d + '%';
+  const tri = execKpiTriClass(k, mm.trend);
+  const show = isFinite(curVal) ? Math.round(curVal) : 0;
+  return `<h3 class="card--kpi-exec-title">${esc(k)}</h3>
+<div class="card--kpi-exec-mid">
+  <span class="card--kpi-exec-pct">${show}%</span>
+  <span class="card--kpi-exec-tri ${tri}" aria-hidden="true"></span>
+</div>
+<p class="card--kpi-exec-delta">${esc(cur)} · MoM <strong>${esc(deltaStr)}</strong></p>
+<p class="card--kpi-exec-prev">${esc(prev)} (prior): ${prevVal}%</p>`;
+}
+
+function buildIndiaMapSvg(z){
+  const states = [
+    {n:'J&K',d:'M52 38 L78 32 L86 52 L68 62 Z',tx:58,ty:48,tip:'J&K · exposure index 62'},
+    {n:'PB',d:'M78 58 L118 54 L122 78 L88 86 Z',tx:92,ty:72,tip:'Punjab · 71'},
+    {n:'RJ',d:'M48 92 L112 84 L118 128 L52 138 Z',tx:72,ty:112,tip:'Rajasthan · 68'},
+    {n:'UP',d:'M118 72 L188 66 L194 118 L124 124 Z',tx:148,ty:98,tip:'Uttar Pradesh · 74'},
+    {n:'MP',d:'M118 118 L198 108 L204 178 L122 188 Z',tx:152,ty:148,tip:'Madhya Pradesh · 69'},
+    {n:'GJ',d:'M28 148 L108 138 L112 198 L34 208 Z',tx:62,ty:176,tip:'Gujarat · 82'},
+    {n:'MH',d:'M88 188 L168 172 L178 248 L92 262 Z',tx:128,ty:220,tip:'Maharashtra · 79'},
+    {n:'KA',d:'M108 248 L188 232 L198 288 L118 298 Z',tx:142,ty:272,tip:'Karnataka · 76'},
+    {n:'TN',d:'M138 288 L198 278 L188 338 L148 348 Z',tx:162,ty:318,tip:'Tamil Nadu · 73'},
+    {n:'WB',d:'M218 128 L268 118 L272 168 L222 178 Z',tx:238,ty:148,tip:'West Bengal · 70'},
+    {n:'NE',d:'M248 88 L298 78 L302 128 L252 138 Z',tx:268,ty:102,tip:'North-East · 65'}
+  ];
+  const indiaOutline = 'M 32 248 L 42 168 L 72 88 L 128 42 L 208 32 L 278 58 L 312 108 L 308 188 L 272 268 L 198 312 L 118 318 L 48 278 Z';
+  const stPaths = states.map(s=>`<path class="state" d="${s.d}" data-tip="${esc(s.tip)}"/>`).join('');
+  const labels = states.map(s=>`<text x="${s.tx}" y="${s.ty}" font-size="7" fill="#1e40af" font-weight="700" pointer-events="none">${esc(s.n)}</text>`).join('');
+  return `<div class="map-panel-inner">
+    <div class="map-zoom"><button type="button" data-zoom="in" aria-label="Zoom in">+</button><button type="button" data-zoom="out" aria-label="Zoom out">−</button></div>
+    <div class="map-svg-wrap" id="mapSvgWrap" style="transform:scale(${z})">
+      <svg class="map-svg" viewBox="0 0 340 360" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <title>India — state-level (illustrative)</title>
+        <path class="india-outline" d="${indiaOutline}" data-tip="India · illustrative boundaries for prototype"/>
+        ${stPaths}
+        ${labels}
+        <text x="120" y="24" font-size="11" fill="#0f172a" font-weight="800">India — states &amp; regions</text>
+      </svg>
+    </div>
+  </div>
+  <div class="map-legend"><span><span class="map-dot" style="background:#006DB6"></span>West</span><span><span class="map-dot" style="background:#00B16B"></span>North</span><span><span class="map-dot" style="background:#8E278F"></span>South</span><span><span class="map-dot" style="background:#F04C23"></span>East</span></div>`;
+}
+
+function splitChartLegend(html) {
+  const markers = ['<div class="line-legend"', '<div class="map-legend"', '<div class="gauge-legend"', '<div class="funnel-legend"'];
+  let idx = -1;
+  markers.forEach(m => {
+    const i = html.indexOf(m);
+    if (i !== -1 && (idx === -1 || i < idx)) idx = i;
+  });
+  if (idx === -1) return { plot: html, leg: '' };
+  return { plot: html.slice(0, idx).trim(), leg: html.slice(idx) };
+}
+function wrapChartViewport(plotHtml) {
+  return `<div class="chart-viewport-wrap">
+    <div class="chart-zoom-tools">
+      <button type="button" data-chart-zoom="in" title="Zoom in" aria-label="Zoom in">+</button>
+      <button type="button" data-chart-zoom="out" title="Zoom out" aria-label="Zoom out">−</button>
+      <button type="button" data-chart-zoom="fit" title="Fit to box" aria-label="Fit">▢</button>
+    </div>
+    <div class="chart-viewport" data-scale="1">${plotHtml}</div>
+  </div>`;
+}
+function passesRowFilters(r){
+  const last = (document.getElementById('lastUpdateFilter').value || '').trim();
+  const bu = (document.getElementById('buFilter').value || '').trim();
+  const site = (document.getElementById('siteFilter').value || '').trim();
+  const sev = (document.getElementById('severityFilter').value || '').trim();
+  const st = (document.getElementById('statusFilter').value || '').trim();
+  if (last && r.lastUpdate !== last) return false;
+  if (bu && bu !== 'All' && r.bu !== bu) return false;
+  if (site && site !== 'All' && r.site !== site) return false;
+  if (sev && sev !== 'All' && r.severity !== sev) return false;
+  if (st && st !== 'All' && r.status !== st) return false;
+  return true;
+}
+function getFilteredPageRows(){
+  return rows.filter(function (r) { return r.page === pageIdx; }).filter(passesRowFilters);
+}
+function sortRowsByKpiOrder(pageRows){
+  const order = pages[pageIdx].kpis || [];
+  const ix = new Map(order.map(function (k, i) { return [k, i]; }));
+  return pageRows.slice().sort(function (a, b) {
+    return (ix.get(a.kpi) != null ? ix.get(a.kpi) : 999) - (ix.get(b.kpi) != null ? ix.get(b.kpi) : 999);
+  });
+}
+function pageKpiNames(limit){
+  return sortRowsByKpiOrder(getFilteredPageRows()).map(function (r) { return r.kpi; }).slice(0, limit);
+}
+/** KPI rows that pass top filters (same set as grid + table). */
+function pageKpiMetrics(limit){
+  const ui = pageUIs[pageIdx];
+  const cap = limit != null ? limit : (ui && ui.kpiCount) || 15;
+  const sorted = sortRowsByKpiOrder(getFilteredPageRows());
+  const take = sorted.slice(0, cap);
+  return take.map(function (r) {
+    const mm = withFilters(r);
+    return {
+      k: r.kpi,
+      mm: mm,
+      v: mm.value,
+      prev: kpiPriorScore(mm.value, mm.delta)
+    };
+  });
+}
+function pageKpiAverage(){
+  const m = pageKpiMetrics();
+  if (!m.length) return 0;
+  var s = 0;
+  for (var i = 0; i < m.length; i++) s += m[i].v;
+  return Math.round(s / m.length);
+}
+function rowForKpi(k){
+  return rows.find(function (x) { return x.page === pageIdx && x.kpi === k; });
+}
+
+function bindChartZoomHost(host) {
+  host.addEventListener('click', e => {
+    const btn = e.target.closest('[data-chart-zoom]');
+    if (!btn || !host.contains(btn)) return;
+    const wrap = btn.closest('.chart-viewport-wrap');
+    const vp = wrap && wrap.querySelector('.chart-viewport');
+    if (!vp) return;
+    let s = parseFloat(vp.getAttribute('data-scale') || '1');
+    const act = btn.getAttribute('data-chart-zoom');
+    if (act === 'in') s = Math.min(2.5, Math.round((s + 0.14) * 100) / 100);
+    else if (act === 'out') s = Math.max(0.5, Math.round((s - 0.14) * 100) / 100);
+    else s = 1;
+    vp.setAttribute('data-scale', String(s));
+    vp.style.transform = s === 1 ? '' : `scale(${s})`;
+  });
+}
+
+function renderCharts(ui){
+  const el = document.getElementById('charts');
+  const kpis = pages[pageIdx].kpis || [];
+  const kNames = pageKpiNames(15);
+  const k5 = kNames.slice(0,5);
+  const k4 = kNames.slice(0,4);
+  const nu = filterNudge();
+  el.className = 'charts ' + ui.chartLayout;
+  el.innerHTML = '';
+  const addPanel = (title, inner, opts = {}) => {
+    const p = document.createElement('div');
+    p.className = 'panel panel--chart' + (opts.panelClass ? ' ' + opts.panelClass : '');
+    let bodyInner;
+    if (opts.plain) {
+      bodyInner = `<div class="chart-body chart-body--tight chart-body--plain">${inner}</div>`;
+    } else {
+      const { plot, leg } = splitChartLegend(inner);
+      bodyInner = `<div class="chart-body chart-body--tight">${wrapChartViewport(plot)}${leg}</div>`;
+    }
+    p.innerHTML = `<div class="ptitle">${esc(title)}</div>${bodyInner}`;
+    el.appendChild(p);
+  };
+  const months = ['Apr','May','Jun','Jul','Aug','Sep'];
+  for (const c of ui.charts){
+    if (c === 'combo'){
+      const W = 280, plotTop = 12, plotBottom = 70, plotLeft = 28;
+      const plotH = plotBottom - plotTop;
+      const pm6 = pageKpiMetrics(6);
+      const raw = pm6.length
+        ? pm6.map(x => Math.min(100, Math.max(0, Math.round(Number(x.v) * nu))))
+        : [38, 52, 45, 61, 48, 55].map(h => Math.min(100, Math.round(h * nu)));
+      const lineVals = pm6.length
+        ? pm6.map(x => Math.min(100, Math.max(0, Math.round(Number(x.prev) * nu))))
+        : raw.map((v, i) => Math.min(100, Math.max(0, v + ((i % 3) - 1) * 4)));
+      const xStep = (W - plotLeft - 14) / Math.max(1, raw.length - 0.35);
+      const bars = raw.map((v, i) => {
+        const x = plotLeft + 5 + i * xStep;
+        const bh = (v / 100) * plotH;
+        const y = plotBottom - bh;
+        return `<rect class="chart-hover" x="${x}" y="${y}" width="13" height="${bh}" rx="2" fill="#006DB6" data-tip="${esc((pm6[i] && pm6[i].k) || kpis[i] || 'KPI')}: ${v}"/>`;
+      }).join('');
+      const poly = lineVals.map((v, i) => {
+        const cx = plotLeft + 11 + i * xStep;
+        const cy = plotBottom - (v / 100) * plotH;
+        return `${cx},${cy}`;
+      }).join(' ');
+      const dots = lineVals.map((v, i) => {
+        const cx = plotLeft + 11 + i * xStep;
+        const cy = plotBottom - (v / 100) * plotH;
+        return `<circle class="chart-hover" cx="${cx}" cy="${cy}" r="2.5" fill="#F04C23" data-tip="${esc(months[i] || 'Mo')} · prior ${v}"/>`;
+      }).join('');
+      const xLabs = raw.map((_, i) => {
+        const cx = plotLeft + 11 + i * xStep;
+        return `<text x="${cx}" y="${plotBottom + 9}" text-anchor="middle" fill="#334155" font-size="8" font-weight="600">${esc(months[i] || '')}</text>`;
+      }).join('');
+      const leg = `<div class="line-legend"><span style="color:#006DB6">■</span> Bars (actual) · <span style="color:#F04C23">●</span> Trend</div>`;
+      addPanel((kNames[0] || kpis[0] || 'Portfolio') + ' · actual vs trend',
+        `<svg class="combo-svg chart-fill-svg" viewBox="0 0 280 84" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          ${chartYGrid(W, plotTop, plotBottom, plotLeft)}
+          ${bars}
+          <polyline class="combo-line" points="${poly}" fill="none" stroke="#F04C23" stroke-width="2" stroke-linecap="round"/>
+          ${dots}
+          ${xLabs}
+          <text x="140" y="81" text-anchor="middle" fill="#64748b" font-size="7" font-weight="600">Month (X)</text>
+        </svg>${leg}`);
+    }
+    if (c === 'histogram'){
+      const scores = pageKpiMetrics(15).map(x => Math.min(100, Math.max(0, Math.round(Number(x.v)))));
+      const bins = [0, 0, 0, 0, 0];
+      scores.forEach(function (v) { bins[Math.min(4, Math.floor(v / 20))]++; });
+      const W = 260, H = 72, L = 26, B = 58;
+      const maxB = Math.max(...bins, 1);
+      const bw = (W - L - 8) / bins.length;
+      const rects = bins.map((b, i) => {
+        const h = (b / maxB) * (B - 14);
+        const x = L + 4 + i * bw;
+        const y = B - h;
+        return `<rect class="chart-hover" x="${x}" y="${y}" width="${bw - 3}" height="${h}" rx="2" fill="#006DB6" data-tip="Bin ${i + 1}: ${b} KPIs"/>`;
+      }).join('');
+      const xLabs = ['0–20','21–40','41–60','61–80','81–100'].map((lab, i) => `<text x="${L + 4 + i * bw + (bw - 3) / 2}" y="${B + 10}" text-anchor="middle" fill="#64748b" font-size="6.5">${lab}</text>`).join('');
+      addPanel('Histogram · score bins · ' + (kpis[1] || 'PSI'),
+        `<svg class="chart-fill-svg hist-svg" viewBox="0 0 260 72" preserveAspectRatio="xMidYMid meet">
+          <text x="${W/2}" y="10" text-anchor="middle" fill="#6D6E71" font-size="8" font-weight="600">Frequency by score band</text>
+          <line x1="${L}" y1="${B}" x2="${W-4}" y2="${B}" stroke="#cbd5e1"/>
+          ${rects}
+          ${xLabs}
+        </svg>
+        <div class="line-legend">X = score band · Y = KPI count (histogram)</div>`);
+    }
+    if (c === 'treemap'){
+      var o = 0, ip = 0, rs = 0;
+      pageKpiMetrics(15).forEach(function (x) {
+        var st = x.mm.status;
+        if (st === 'Open') o++;
+        else if (st === 'Resolved') rs++;
+        else ip++;
+      });
+      var tot = o + ip + rs || 1;
+      let parts = [
+        { l: 'Open', n: o, c: '#f04c23' },
+        { l: 'In progress', n: ip, c: '#006db6' },
+        { l: 'Resolved', n: rs, c: '#00b16b' }
+      ].filter(function (p) { return p.n > 0; });
+      if (!parts.length) parts = [{ l: 'KPI mix', n: 1, c: '#64748b' }];
+      let x = 8;
+      const rects = parts.map(p => {
+        const rw = Math.max(24, (p.n / tot) * 230);
+        const rh = 36;
+        const r = `<rect class="chart-hover" x="${x}" y="14" width="${rw}" height="${rh}" fill="${p.c}" rx="3" opacity="0.95" data-tip="${esc(p.l)}: ${p.n} KPIs (${Math.round(p.n / tot * 100)}%)"/>`;
+        const t = `<text x="${x + rw/2}" y="${14 + rh/2 + 4}" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">${esc(p.l)} ${p.n}</text>`;
+        x += rw + 2;
+        return r + t;
+      }).join('');
+      addPanel('Treemap · severity / status mix',
+        `<svg class="chart-fill-svg" viewBox="0 0 260 72" preserveAspectRatio="xMidYMid meet">${rects}</svg>
+        <div class="line-legend">Area ∝ share (treemap)</div>`);
+    }
+    if (c === 'line_bar' || c === 'line_bar_m'){
+      const useMonths = c === 'line_bar_m';
+      const W = 268, plotTop = 14, plotBottom = 64, plotLeft = 30, H = 86;
+      const plotH = plotBottom - plotTop;
+      const avg = pageKpiAverage();
+      const vals = useMonths
+        ? months.map((m, i) => {
+            const spread = (hashSeed(pageIdx + m + 'mo') % 9) - 4;
+            return { k: m, v: Math.min(100, Math.max(0, Math.round((avg + spread) * nu))) };
+          })
+        : pageKpiMetrics(5).map(function (x) {
+            return { k: x.k, v: Math.min(100, Math.max(0, Math.round(Number(x.mm.value) * nu))) };
+          });
+      if (!useMonths && (!vals || !vals.length)) {
+        addPanel('Line & column · KPI trend',
+          `<div style="font-size:8px;color:#6D6E71;padding:8px;text-align:center">No KPIs match the selected filters.</div>`,
+          { plain: true });
+      } else {
+        const xStep = (W - plotLeft - 10) / Math.max(1, vals.length - 0.25);
+        const cx = i => plotLeft + 7 + i * xStep;
+        const bars = vals.map(({ k, v }, i) => {
+          const x = cx(i) - 5;
+          const bh = (v / 100) * plotH;
+          const y = plotBottom - bh;
+          return `<rect class="chart-hover" x="${x}" y="${y}" width="10" height="${bh}" fill="#006DB6" stroke="#004a80" stroke-width="0.25" rx="1.5" data-tip="${esc(k)}: ${v}"/>`;
+        }).join('');
+        const lineY = vals.map(({ v }) => plotBottom - (v / 100) * plotH);
+        const poly = vals.map((_, i) => `${cx(i)},${lineY[i]}`).join(' ');
+        const dots = vals.map(({ k }, i) => `<circle class="chart-hover" cx="${cx(i)}" cy="${lineY[i]}" r="3" fill="#F04C23" stroke="#fff" stroke-width="0.75" data-tip="${esc(k)}: ${vals[i].v}"/>`).join('');
+        const xLabs = vals.map(({ k }, i) => `<text x="${cx(i)}" y="${plotBottom + 8}" text-anchor="middle" fill="#334155" font-size="7" font-weight="600">${esc(String(k).slice(0, 9))}</text>`).join('');
+        const xTitle = useMonths ? 'Month (X)' : 'KPI name (X)';
+        const panelTitle = useMonths ? 'Line & column · period trend' : 'Line & column · KPI trend';
+        addPanel(panelTitle,
+          `<svg class="combo-svg chart-fill-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+            ${chartYGrid(W, plotTop, plotBottom, plotLeft)}
+            ${bars}
+            <polyline class="combo-line" points="${poly}" fill="none" stroke="#F04C23" stroke-width="1.85" stroke-linejoin="round" stroke-linecap="round"/>
+            ${dots}
+            ${xLabs}
+            <text x="${W / 2}" y="${H - 2}" text-anchor="middle" fill="#64748b" font-size="7" font-weight="600">${xTitle}</text>
+          </svg>
+          <div class="line-legend"><span style="color:#006DB6">■</span> Columns (value) · <span style="color:#F04C23">●</span> Line (trend) · Y = score 0–100</div>`);
+      }
+    }
+    if (c === 'variance_bars'){
+      const pm = pageKpiMetrics(4);
+      if (!pm.length) {
+        addPanel('Actual vs target gap (filtered)',
+          `<div style="font-size:8px;color:#6D6E71;padding:8px;text-align:center">No KPIs match the selected filters.</div>`,
+          { plain: true });
+      } else {
+        const W = 260, H = 72, trackW = 148, lx = 72, rowH = 15, baseY = 12;
+        const rowsSvg = pm.map(function (p, i) {
+          const mm = p.mm;
+          const v = Math.min(100, Math.max(0, Math.round(Number(mm.value) * nu)));
+          const tgt = Math.min(100, Math.max(0, Number(mm.target) || 100));
+          const y = baseY + i * rowH;
+          const wBar = (v / 100) * trackW;
+          const gap = Math.round(tgt - v);
+          return `<text x="4" y="${y + 8}" font-size="5.5" fill="#231F20" font-weight="700">${esc(String(p.k).slice(0, 28))}</text>
+            <rect x="${lx}" y="${y + 3}" width="${trackW}" height="7" fill="#f1f5f9" rx="2"/>
+            <rect class="chart-hover" x="${lx}" y="${y + 3}" width="${Math.max(0.5, wBar)}" height="7" fill="#006DB6" rx="2" data-tip="${esc(p.k)}: actual ${v} · target ${tgt} · gap ${gap}"/>
+            <line x1="${lx + trackW}" y1="${y + 2}" x2="${lx + trackW}" y2="${y + 11}" stroke="#F04C23" stroke-width="2"/>
+            <text x="${lx + trackW + 4}" y="${y + 9}" font-size="6" fill="#231F20">${v}/${tgt}</text>`;
+        }).join('');
+        addPanel('Actual vs target gap (filtered)',
+          `<svg class="chart-fill-svg variance-bars-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+            <text x="4" y="8" font-size="6" fill="#6D6E71" font-weight="700">Score vs 100 target (filtered KPIs)</text>
+            ${rowsSvg}
+          </svg>
+          <div class="line-legend">Blue bar = current score · orange line = target</div>`);
+      }
+    }
+    if (c === 'dual_kpi'){
+      const fr0 = sortRowsByKpiOrder(getFilteredPageRows());
+      const mA = fr0.length ? withFilters(fr0[0]) : withFilters(getKpiRow(kpis[0] || 'KPI'));
+      const a = Math.min(100, Math.max(0, Math.round(Number(mA.value) * nu)));
+      const b = Math.min(100, Math.max(0, Math.round(Number(mA.target) * nu)));
+      addPanel('Dual KPI · target gap',
+        `<div class="dual-kpi">
+          <div class="dual-kpi__cell" data-tip="Actual score ${a}"><div class="dual-kpi__lab">Actual</div><div class="dual-kpi__num">${a}</div></div>
+          <div class="dual-kpi__cell" data-tip="Target ${b}"><div class="dual-kpi__lab">Target</div><div class="dual-kpi__num">${b}</div></div>
+        </div>
+        <div class="line-legend">Dual KPI (Power BI–style card pair)</div>`, { plain: true });
+    }
+    if (c === 'stream'){
+      const pm7 = pageKpiMetrics(7);
+      const pts = pm7.length ? pm7.map(x => Math.min(100, Math.max(5, Number(x.v)))) : [20, 35, 28, 42, 38, 30, 25];
+      let d = 'M 8 40 ';
+      pts.forEach((p, i) => { d += `L ${20 + i * 36} ${40 - p * 0.35} `; });
+      d += `L 236 40 L 236 52 `;
+      for (let i = pts.length - 1; i >= 0; i--) d += `L ${20 + i * 36} ${52 + pts[i] * 0.25} `;
+      d += 'Z';
+      addPanel('Stream graph · rolling mix',
+        `<svg class="stream-svg chart-fill-svg" viewBox="0 0 260 68" preserveAspectRatio="xMidYMid meet">
+          <path class="chart-hover" d="${d}" fill="#006DB6" fill-opacity="0.35" stroke="#006DB6" stroke-width="1" data-tip="Stream · composition over time"/>
+        </svg>
+        <div class="line-legend">Stream = stacked composition over time</div>`);
+    }
+    if (c === 'table_heatmap'){
+      const cols = ['W1','W2','W3','W4','W5'];
+      const rows = ['S1','S2','S3','S4'];
+      const pm = pageKpiMetrics(20);
+      let html = '<table class="table-heatmap"><thead><tr><th></th>';
+      cols.forEach(cn => { html += `<th>${cn}</th>`; });
+      html += '</tr></thead><tbody>';
+      rows.forEach((rn, ri) => {
+        html += `<tr><th>${rn}</th>`;
+        cols.forEach((_, ci) => {
+          const ix = (ri * cols.length + ci) % Math.max(1, pm.length);
+          const v = pm[ix] ? Math.round(pm[ix].v) : pageKpiAverage();
+          const op = 0.28 + v / 100 * 0.62;
+          html += `<td class="thm-cell" data-tip="R${ri + 1} ${cols[ci]}: ${v}" style="background:rgba(0,109,182,${op});color:#0f172a;font-weight:800">${v}</td>`;
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      addPanel('Table heatmap · site × week',
+        `${html}<div class="line-legend">Cell color = intensity (table heatmap)</div>`, { plain: true });
+    }
+    if (c === 'map'){
+      addPanel('India · regional exposure (zoom)',
+        `<div class="chart-map-root">${buildIndiaMapSvg(mapZoom)}</div>`);
+    }
+    if (c === 'mekko'){
+      const mk = pageKpiMetrics(3);
+      const segs = mk.length
+        ? mk.map((x, i) => {
+            const v = Math.min(100, Math.max(0, Math.round(Number(x.v))));
+            const p1 = Math.round(v * 0.42);
+            const p2 = Math.round(v * 0.33);
+            const p3 = Math.max(0, 100 - p1 - p2);
+            return { l: String.fromCharCode(65 + i), w: 28 + i * 2, p1: p1, p2: p2, p3: p3 };
+          })
+        : [
+            { l: 'A', w: 32, p1: 45, p2: 35, p3: 20 },
+            { l: 'B', w: 28, p1: 30, p2: 40, p3: 30 },
+            { l: 'C', w: 24, p1: 50, p2: 25, p3: 25 }
+          ];
+      let x = 20;
+      const blocks = segs.map(s => {
+        const tw = s.w * 2.4;
+        const h1 = s.p1 * 0.35, h2 = s.p2 * 0.35, h3 = s.p3 * 0.35;
+        const stack = `<rect class="chart-hover" x="${x}" y="${50-h1-h2-h3}" width="${tw}" height="${h1}" fill="#15803d" data-tip="${esc(s.l)} · green"/><rect class="chart-hover" x="${x}" y="${50-h2-h3}" width="${tw}" height="${h2}" fill="#d97706" data-tip="${esc(s.l)} · amber"/><rect class="chart-hover" x="${x}" y="${50-h3}" width="${tw}" height="${h3}" fill="#b91c1c" data-tip="${esc(s.l)} · red"/><text x="${x+tw/2}" y="58" text-anchor="middle" font-size="7" fill="#334155" pointer-events="none">${esc(s.l)}</text>`;
+        x += tw + 4;
+        return stack;
+      }).join('');
+      addPanel('Mekko · share × segment width',
+        `<svg class="mekko-svg chart-fill-svg" viewBox="0 0 260 64" preserveAspectRatio="xMidYMid meet">
+          <text x="130" y="10" text-anchor="middle" font-size="8.5" font-weight="600" fill="#334155">Width = segment · stack = RAG mix (from KPI scores)</text>
+          ${blocks}
+        </svg>
+        <div class="line-legend">Mekko = marimekko (100% stacked × width)</div>`);
+    }
+    if (c === 'multi_kpi'){
+      const cells = k4.map((k) => {
+        const row = rowForKpi(k);
+        const mm = row ? withFilters(row) : withFilters(getKpiRow(k));
+        const tip = `${k} · ${mm.value}% · prior ${kpiPriorScore(mm.value, mm.delta)}% · Δ ${mm.delta >= 0 ? '+' : ''}${mm.delta}%`;
+        return `<div class="mk-card" data-tip="${esc(tip)}">${execKpiCardInner(mm, k)}</div>`;
+      }).join('');
+      addPanel('Multi KPI · snapshot',
+        `<div class="multi-kpi-grid">${cells}</div>
+        <div class="line-legend">Executive KPI cards · large # = current % (aligned with grid + table)</div>`, { plain: true });
+    }
+    if (c === 'power_kpi'){
+      const g = Math.min(100, Math.max(0, Math.round(pageKpiAverage() * nu)));
+      const r = 17, cx = 24, cy = 24, C = 2 * Math.PI * r, dash = Math.max(0.01, (g / 100) * C);
+      const ringSvg = `<svg class="gauge-svg" width="48" height="48" viewBox="0 0 48 48" aria-hidden="true"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#006DB6" stroke-width="5" stroke-linecap="round" stroke-dasharray="${dash} ${C}" transform="rotate(-90 ${cx} ${cy})"/></svg>`;
+      addPanel('Power KPI · index + gauge',
+        `<div class="power-kpi" data-tip="Composite safety index ${g} · target 85">
+          <div><div class="power-kpi__big">${g}</div><div class="power-kpi__sub">Composite index · vs target 85</div></div>
+          <div class="gauge" style="min-height:48px"><div class="gauge-svg-wrap">${ringSvg}</div><div class="txt" style="font-size:11px">${g}</div></div>
+        </div>
+        <div class="line-legend">Index + ring (solid brand blue)</div>`, { plain: true });
+    }
+  }
+  el.querySelectorAll('[data-zoom]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      mapZoom = Math.min(2.4, Math.max(0.55, mapZoom + (btn.getAttribute('data-zoom')==='in'?0.15:-0.15)));
+      const w = document.getElementById('mapSvgWrap');
+      if(w) w.style.transform = 'scale('+mapZoom+')';
+    });
+  });
+}
+
+function renderBuPairs(){
+  const a = document.getElementById('buPairsA');
+  const b = document.getElementById('buPairsB');
+  a.className = 'bu-chip-grid';
+  b.className = 'bu-chip-grid';
+  a.innerHTML = BSC_PAIRS_A.map(x=>`<div class="bu-chip" data-tip="Group A · ${esc(x)}">${esc(x)}</div>`).join('');
+  b.innerHTML = BSC_PAIRS_B.map(x=>`<div class="bu-chip" data-tip="Group B · ${esc(x)}">${esc(x)}</div>`).join('');
+}
+
+function renderBSC(){
+  const sum = window.CONVERTER_MIS && window.CONVERTER_MIS.summary;
+  if (sum && sum.length) {
+    const high = Math.max.apply(null, sum.map(function (s) { return s.score; }));
+    const avg = Math.round(sum.reduce(function (a, s) { return a + s.score; }, 0) / sum.length);
+    const totalKpi = sum.reduce(function (a, s) { return a + s.kpiCount; }, 0);
+    document.getElementById('bscHigh').textContent = high + '%';
+    document.getElementById('bscKeyEl').textContent = String(totalKpi);
+    document.getElementById('bscPerf').textContent = String(avg);
+    const row = document.getElementById('bscPerspRow');
+    if (row) {
+      row.innerHTML = sum.map(function (s) {
+        return '<div class="hero-card" data-tip="' + esc(s.pillar) + '"><h3>' + esc(s.perspective) + '</h3><div class="big">' + s.score + '%</div><div class="pct-note">' + esc(s.pillar) + '</div></div>';
+      }).join('');
+    }
+  } else {
+    document.getElementById('bscHigh').textContent = '94%';
+    document.getElementById('bscKeyEl').textContent = '48';
+    document.getElementById('bscPerf').textContent = '82';
+    const row = document.getElementById('bscPerspRow');
+    if (row) {
+      const fb = [
+        { t: 'Lagging indicators', v: '22%', n: 'Involvement' },
+        { t: 'Leading indicators', v: '18%', n: 'Involvement' },
+        { t: 'HR perspective', v: '20%', n: 'Involvement' },
+        { t: 'Assurance', v: '19%', n: 'Involvement' },
+        { t: 'Leadership & governance', v: '21%', n: 'Involvement' }
+      ];
+      row.innerHTML = fb.map(function (x) {
+        return '<div class="hero-card"><h3>' + esc(x.t) + '</h3><div class="big">' + esc(x.v) + '</div><div class="pct-note">' + esc(x.n) + '</div></div>';
+      }).join('');
+    }
+  }
+  renderBuPairs();
+  const ga = document.getElementById('bandGroupA');
+  const gb = document.getElementById('bandGroupB');
+  ga.innerHTML = ''; gb.innerHTML = '';
+  const addBand = (container, label, red, amb, grn, tip) => {
+    const row = document.createElement('div');
+    row.className = 'band-row';
+    row.innerHTML = `<span class="lbl">${esc(label)}</span><div class="band-bar" data-tip="${esc(tip)}"><span class="band-red" style="width:${red}%">${red}%</span><span class="band-amb" style="width:${amb}%">${amb}%</span><span class="band-grn" style="width:${grn}%">${grn}%</span></div>`;
+    container.appendChild(row);
+  };
+  addBand(ga,'Q1',22,38,40,'Group A · Red &lt;65 · Amber 65–79 · Green ≥80');
+  addBand(ga,'Q2',18,35,47,'QoQ · High risk portfolio');
+  addBand(gb,'Q1',12,28,60,'Group B · Moderate risk');
+  addBand(gb,'Q2',10,26,64,'QoQ shift toward green');
+  const wrap = document.getElementById('bscLollipop');
+  wrap.innerHTML = `<table class="bsc-table"><thead><tr>
+    <th>BU Name</th><th>BU Group</th><th>Raw Score</th><th>Rank in Group</th><th>Percentile in Group</th><th>Group Weightage</th><th>Weighted Score</th><th>Overall Rank</th><th>Raw (bar)</th>
+  </tr></thead><tbody>
+  ${bscUnits.slice().sort((a,b)=>a.oa-b.oa).map(x=>{
+    const rkClass = 'rk-'+x.oa;
+    return `<tr>
+      <td>${esc(x.u)}</td>
+      <td>${esc(x.grp)}</td>
+      <td>${x.raw}</td>
+      <td>${x.rk}</td>
+      <td>${x.pct}</td>
+      <td>${x.w}</td>
+      <td>${x.ws}</td>
+      <td class="cell-rank ${rkClass}">${x.oa}</td>
+      <td class="bsc-bar-cell"><div class="bar-wrap" data-tip="Raw ${x.raw}"><div class="bar-fill" style="width:${Math.min(100,x.raw)}%"></div></div></td>
+    </tr>`;
+  }).join('')}
+  </tbody></table>`;
+}
+
+function pillClass(st){
+  if (st === 'Open') return 'pill pill--open';
+  if (st === 'In Progress') return 'pill pill--ip';
+  return 'pill pill--res';
+}
+
+function render(){
+  const isBsc = pageIdx === 5;
+  document.getElementById('misWrap').classList.toggle('hidden', isBsc);
+  document.getElementById('bscWrap').classList.toggle('active', isBsc);
+
+  const p = pages[pageIdx];
+  document.getElementById('pageTitle').textContent = 'Adani Group Safety — ' + p.name;
+
+  if (isBsc) {
+    document.getElementById('themeHint').textContent = p.theme ? ('Theme: ' + p.theme) : 'Balance scorecard — executive view';
+    renderBSC();
+    return;
+  }
+
+  const ui = pageUIs[pageIdx];
+  const sortedRows = sortRowsByKpiOrder(getFilteredPageRows());
+  if (selectedKpi && !sortedRows.some(r => r.kpi === selectedKpi)) selectedKpi = '';
+  document.getElementById('themeHint').textContent = p.theme
+    ? ('Theme: ' + p.theme + ' · ' + sortedRows.length + ' KPIs match filters')
+    : (sortedRows.length + ' KPIs match filters');
+  renderCharts(ui);
+  const grid = document.getElementById('kpiGrid');
+  grid.innerHTML = '';
+  const showCards = sortedRows.slice(0, ui.kpiCount);
+  showCards.forEach(r => {
+    const k = r.kpi;
+    const mm = withFilters(r);
+    const card = document.createElement('article');
+    card.className = 'card--kpi' + (selectedKpi === k ? ' active' : '');
+    card.setAttribute('data-tip', `${k} · ${mm.value}% · Tgt ${mm.target} · prior ${kpiPriorScore(mm.value, mm.delta)}%`);
+    card.innerHTML = execKpiCardInner(mm, k);
+    card.addEventListener('click', () => { selectedKpi = k; render(); });
+    grid.appendChild(card);
+  });
+  const tbody = document.getElementById('tbl');
+  tbody.innerHTML = '';
+  const maxRows = ui.tableRows != null ? ui.tableRows : sortedRows.length;
+  if (!sortedRows.length) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="7" style="text-align:center;color:#6D6E71;padding:12px;font-size:10px">No KPIs match the selected filters. Try setting Status to <strong>All</strong> or clearing other filters.</td>`;
+    tbody.appendChild(tr);
+  } else {
+    sortedRows.slice(0, maxRows).map(r => withFilters(r)).forEach(r => {
+      const tr = document.createElement('tr');
+      const arrow = r.trend === 'up' ? '▲' : '▼';
+      const tw = Math.min(100, Math.abs(r.delta) * 3 + 15);
+      const curDisp = Math.round(Number(r.value));
+      tr.innerHTML = `<td class="td-kpi">${esc(r.kpi)}</td><td><strong>${curDisp}</strong></td><td>${r.target}</td>
+        <td class="td-trend"><div class="trend-cell"><div class="trend-bar" title="Magnitude of change"><span style="width:${tw}%"></span></div><span class="trend-pct ${r.trend==='up'?'trend up':'trend down'}">${arrow} ${Math.abs(r.delta)}%</span></div></td>
+        <td><span class="${pillClass(r.status)}">${esc(r.status)}</span></td><td>${esc(r.lastUpdate)}</td><td>${esc(r.owner)}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+}
+
+function tickClock(){
+  const el = document.getElementById('clockEl');
+  if (!el) return;
+  const d = new Date();
+  el.textContent = 'Last update: ' + d.toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true });
+}
+setInterval(tickClock, 1000);
+tickClock();
+
+document.querySelectorAll('.sbtn').forEach((btn, i) => {
+  btn.addEventListener('click', () => {
+    pageIdx = i;
+    selectedKpi = '';
+    mapZoom = 1;
+    document.querySelectorAll('.sbtn').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  });
+});
+document.getElementById('toggleNav').addEventListener('click', () => {
+  document.getElementById('canvas').classList.toggle('nav-collapsed');
+});
+function bindFilters(){
+  const row = document.getElementById('filterRow');
+  if (!row) return;
+  const run = () => render();
+  row.addEventListener('change', run);
+  row.addEventListener('input', run);
+}
+bindFilters();
+document.getElementById('dateFilter').value = today;
+document.getElementById('lastUpdateFilter').value = today;
+bindChartZoomHost(document.getElementById('charts'));
+render();
+</script>
+</body>
+</html>

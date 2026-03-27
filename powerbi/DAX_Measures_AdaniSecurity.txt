@@ -1,0 +1,54 @@
+// Create these measures in Power BI (Model view -> New measure)
+
+// Core measures
+KPI Current =
+SUM ( 'adani_security_facts'[KPIValue] )
+
+KPI Target =
+SUM ( 'adani_security_facts'[Target] )
+
+KPI Variance =
+[KPI Current] - [KPI Target]
+
+KPI Variance % =
+DIVIDE ( [KPI Variance], [KPI Target] )
+
+KPI Delta Pct (Avg) =
+AVERAGE ( 'adani_security_facts'[DeltaPct] )
+
+Last Update (Max) =
+MAX ( 'adani_security_facts'[LastUpdate] )
+
+// Trend arrow for cards / tables
+Trend Arrow =
+VAR d = [KPI Delta Pct (Avg)]
+RETURN
+IF ( d >= 0, UNICHAR ( 9650 ) & " " & FORMAT ( d, "0" ) & "%", UNICHAR ( 9660 ) & " " & FORMAT ( ABS ( d ), "0" ) & "%" )
+
+// Status label (by current value)
+KPI Status =
+VAR v = [KPI Current]
+RETURN
+SWITCH ( TRUE (),
+  v >= 90, "Green",
+  v >= 65, "Amber",
+  "Red"
+)
+
+// Status color hex (conditional formatting)
+KPI Status Color =
+SWITCH ( [KPI Status],
+  "Green", "#0F9D58",
+  "Amber", "#F59E0B",
+  "Red",   "#D93025",
+  "#94A3B8"
+)
+
+// Tooltip text example (use in visual tooltip)
+Tooltip KPI Summary =
+VAR k = SELECTEDVALUE ( 'adani_security_facts'[KPIName] )
+RETURN
+k & " | Current: " & FORMAT ( [KPI Current], "0" ) &
+" | Target: " & FORMAT ( [KPI Target], "0" ) &
+" | " & [Trend Arrow]
+
