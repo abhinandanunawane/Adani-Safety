@@ -33,23 +33,19 @@
        spreadMethod="pad"
        id="linearGradient50">
       <stop
-         style="stop-opacity:1;stop-color:#00b16b"
+         style="stop-opacity:1;stop-color:#0CA6D5"
          offset="0"
          id="stop40" />
       <stop
-         style="stop-opacity:1;stop-color:#006db6"
+         style="stop-opacity:1;stop-color:#1C6FCB"
          offset="0.350006"
          id="stop42" />
       <stop
-         style="stop-opacity:1;stop-color:#8e278f"
+         style="stop-opacity:1;stop-color:#6B3FC1"
          offset="0.649994"
          id="stop44" />
       <stop
-         style="stop-opacity:1;stop-color:#f04c23"
-         offset="0.899994"
-         id="stop46" />
-      <stop
-         style="stop-opacity:1;stop-color:#f04c23"
+         style="stop-opacity:1;stop-color:#CF3F79"
          offset="1"
          id="stop48" />
     </linearGradient>

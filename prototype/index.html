@@ -3,54 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Adani Group Safety — MIS + BSC Dashboard</title>
-  <!-- Adani Brand Manual (Aug 2025): primary typeface Adani; system fallback Arial. Font files in prototype/fonts/ optional. -->
+  <meta name="description" content="Executive balanced scorecard for Adani Group safety performance — portfolio KPIs, BU bands, and business ranking." />
+  <title>Adani Group Safety — BSC Executive Scorecard</title>
+  <!-- UI typography: Segoe UI (Windows UI font); fallbacks for macOS/Linux. -->
   <style>
-    @font-face{
-      font-family:'Adani Sans';
-      font-style:normal;font-weight:400;font-display:swap;
-      src:local('Adani Sans'),url('fonts/AdaniSans-Regular.woff2') format('woff2'),url('fonts/AdaniSans-Regular.woff') format('woff');
-    }
-    @font-face{
-      font-family:'Adani Sans';
-      font-style:normal;font-weight:700;font-display:swap;
-      src:local('Adani Sans Bold'),url('fonts/AdaniSans-Bold.woff2') format('woff2'),url('fonts/AdaniSans-Bold.woff') format('woff');
-    }
     :root{
-      /* Unit colours + font colour palette — Adani Brand Manual (Aug 2025) */
+      /* Adani brand anchors (Aug 2025) — UI uses pastel tints derived from these */
       --brand-green:#00B16B; --brand-blue:#006DB6; --brand-purple:#8E278F; --brand-orange:#F04C23;
       --brand-cyan:#0ca6d5; --brand-magenta:#cf3f79;
-      --ink:#231F20; --ink-muted:#6D6E71; --ink-headline:#8E278F; --bg:#e8eef6; --surface:#ffffff; --border:#c5d4e3;
-      --nav-bg:#e8f2fa; --nav-border:#b8d4ea;
-      --neutral-50:#f8fafc; --neutral-100:#f1f5f9; --neutral-200:#e2e8f0; --neutral-300:#cbd5e1;
-      --perf-green:#15803d; --perf-green-soft:#dcfce7; --perf-amber:#d97706; --perf-amber-soft:#fef3c7;
-      --perf-red:#b91c1c; --perf-red-soft:#fee2e2; --perf-orange:#ea580c;
-      --status-open-bg:#fff1f2; --status-open-text:#9f1239; --status-open-border:#fda4af;
-      --status-ip-bg:#fffbeb; --status-ip-text:#b45309; --status-ip-border:#fcd34d;
-      --status-res-bg:#ecfdf5; --status-res-text:#047857; --status-res-border:#6ee7b7;
-      --shadow-sm:0 1px 2px rgba(15,23,42,.06);
+      --ink:#2e2a32; --ink-muted:#6f6a75; --ink-headline:#6d4a7a;
+      --bg:#eef4f9; --surface:#fffefb; --border:#d9e3ed;
+      --neutral-50:#faf8fc; --neutral-100:#f1eef6; --neutral-200:#e4e0ea; --neutral-300:#cfc8d4;
+      --paste-lilac:#ebe3f4; --paste-sky:#d4e8f5; --paste-mint:#c9eedd; --paste-peach:#fcdfd6; --paste-butter:#f9ebc7;
+      --topbar-grad:linear-gradient(110deg,#e8f2fb 0%,#efe6f5 42%,#e4f5ef 100%);
+      --accent-soft:#7a9fc9; --accent-soft-2:#a088b8;
+      --perf-green:#3d8f6a; --perf-green-soft:#dff5ea; --perf-amber:#c17d35; --perf-amber-soft:#fdf0d8;
+      --perf-red:#c45a5a; --perf-red-soft:#fde8e8; --perf-orange:#d97757;
+      --status-open-bg:#fdeff1; --status-open-text:#8b3d55; --status-open-border:#f3c2cb;
+      --status-ip-bg:#fdf6e4; --status-ip-text:#8a6324; --status-ip-border:#f0daa8;
+      --status-res-bg:#e8f7ef; --status-res-text:#2d6b4e; --status-res-border:#b8e5cc;
+      --shadow-sm:0 2px 8px rgba(80,60,100,.06);
+      /* Spacing & radii — consistent layout (IA / UCD) */
+      --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+      --radius-sm:6px; --radius-md:10px; --radius-lg:12px;
+      --focus-ring:0 0 0 3px rgba(122,159,201,.55);
+      --font-label:8.5px; --font-body:10px; --font-title-sm:11px; --font-title-md:14px; --font-title-lg:16px;
+      --font-ui:'Segoe UI','Segoe UI Variable',system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',Helvetica,Arial,sans-serif;
     }
+    html,body{min-height:100%}
+    html{font-family:var(--font-ui);overflow-x:hidden;overflow-y:auto}
+    svg,svg text{font-family:var(--font-ui)}
+    canvas{font-family:var(--font-ui)}
     *{box-sizing:border-box}
-    body{margin:0;font-family:'Adani Sans',Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:center;min-height:100vh}
-    .canvas{width:100%;max-width:1366px;height:720px;background:#f0f5fb;display:flex;overflow:hidden;box-shadow:0 8px 32px rgba(15,23,42,.08);padding:0 10px}
-    .sidebar{width:220px;background:var(--nav-bg);color:var(--ink);border-right:1px solid var(--nav-border);padding:8px 8px;transition:width .25s ease;overflow:hidden;flex-shrink:0}
-    .canvas.nav-collapsed .sidebar{width:0;padding:0}
-    .logo-wrap{padding:10px 8px 12px;text-align:center;background:#fff;border-radius:10px;margin:4px 2px 8px;box-shadow:0 1px 3px rgba(15,23,42,.08)}
-    .logo-wrap img{width:148px;height:auto;display:block;margin:0 auto}
-    .logo-fallback{font-size:26px;font-weight:800;color:var(--brand-purple);letter-spacing:-0.02em}
-    .nav-title{font-size:9px;color:var(--ink-muted);letter-spacing:.3px;margin:4px 0 2px 6px;font-weight:700;text-transform:uppercase}
-    .sbtn{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--ink);margin:3px 0;cursor:pointer;text-align:left;font-size:10.5px;line-height:1.2;transition:.15s;box-shadow:var(--shadow-sm)}
-    .sbtn:hover{background:#f1f5f9;border-color:#94a3b8}
-    .sbtn.active{background:var(--brand-blue);border-color:var(--brand-blue);color:#fff;font-weight:700}
-    .main{flex:1;display:flex;flex-direction:column;padding:6px 8px;gap:5px;overflow:hidden;min-width:0;min-height:0}
-    .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--brand-blue);padding:6px 10px;border-radius:8px;color:#fff;box-shadow:var(--shadow-sm);flex-shrink:0}
-    .topbar__left{display:flex;align-items:center;gap:8px;min-width:0}
-    .toggle{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:#fff;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:14px}
-    #pageTitle{font-size:13px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .topbar__clock{font-size:10px;font-weight:600;opacity:.95;white-space:nowrap;text-align:right}
-    .filters{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;flex-shrink:0}
-    .filters input,.filters select{height:28px;padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface);font-size:10.5px}
-    .theme-hint{font-size:9px;color:var(--ink-muted);margin:0 0 0 2px;line-height:1.2;flex-shrink:0}
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    }
+    .skip-link{position:absolute;left:var(--space-2);top:var(--space-2);z-index:10000;padding:var(--space-2) var(--space-3);background:var(--ink-headline);color:var(--surface);font-weight:700;font-size:var(--font-body);border-radius:var(--radius-sm);transform:translateY(-120%);transition:transform .2s ease}
+    .skip-link:focus{transform:translateY(0);outline:none;box-shadow:var(--focus-ring)}
+    .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    body{margin:0;font-family:var(--font-ui);background:linear-gradient(165deg,var(--bg) 0%,#e8eef8 50%,var(--paste-lilac) 100%);color:var(--ink);display:flex;align-items:flex-start;justify-content:center;min-height:100%;overflow-x:hidden;overflow-y:auto;line-height:1.45;padding:var(--space-2) 0;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    button,input,select,textarea{font-family:inherit;font-size:inherit}
+    .canvas{
+      width:100%;max-width:1366px;min-height:min(720px,100vh);height:auto;
+      background:linear-gradient(180deg,#fbfdff 0%,#f3f7fb 100%);
+      display:flex;flex-direction:column;align-items:stretch;
+      overflow:visible;box-shadow:0 12px 40px rgba(90,70,120,.08);
+      padding:var(--space-2) var(--space-3);border-radius:var(--radius-lg);border:1px solid var(--border);gap:var(--space-2);
+      flex:0 1 auto;
+    }
+    .canvas > .topbar-block,.canvas > .filters-wrap{flex-shrink:0}
+    .canvas > main{flex:1 1 auto;min-height:0;min-width:0;display:flex;flex-direction:column;overflow:visible}
+    .topbar-logo{flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border-radius:0;padding:0;border:none;box-shadow:none;min-height:50px}
+    .topbar-logo img{height:50px;width:auto;display:block;object-fit:contain}
+    .logo-fallback{font-size:12px;font-weight:800;color:var(--ink-headline);letter-spacing:-0.02em;line-height:1.1;max-width:72px}
+    .main{padding:0;gap:var(--space-2);overflow:visible;min-width:0;min-height:0;outline:none;display:flex;flex-direction:column;flex:1 1 auto}
+    .main:focus-visible{box-shadow:var(--focus-ring);border-radius:var(--radius-sm)}
+    .topbar-block{flex-shrink:0;display:flex;flex-direction:column;gap:0;border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;background:#fff;box-shadow:var(--shadow-sm)}
+    header.topbar{display:flex;flex-direction:column;gap:0;background:#fff;padding:var(--space-3) var(--space-4);border:none;border-radius:0;color:var(--ink)}
+    .topbar-purple-strip{height:5px;flex-shrink:0;background:var(--brand-purple);border:none;margin:0}
+    .topbar__row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap;min-width:0;min-height:50px}
+    .topbar__brand{display:flex;align-items:center;gap:var(--space-3);min-width:0;flex:1 1 auto}
+    .topbar__left{display:flex;align-items:center;gap:10px;min-width:0;flex-shrink:0}
+    .topbar__titles{display:flex;flex-direction:column;justify-content:center;gap:0;min-width:0;min-height:50px}
+    h1.dashboard-title{margin:0;font-size:clamp(16px,2.4vw,20px);font-weight:800;line-height:1.15;color:var(--ink-headline);letter-spacing:-.02em}
+    .topbar__clock{font-size:9px;font-weight:600;color:var(--ink-muted);text-align:right;line-height:1.5;flex-shrink:0;max-width:min(100%,280px)}
+    .topbar__clock .clock-line{display:block}
+    .filters-wrap{flex-shrink:0;display:flex;flex-direction:column;gap:0;min-width:0;padding:2px 0 0}
+    .filters{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-end;gap:8px;min-width:0;overflow:hidden;padding-bottom:2px}
+    .filter-field{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 0 92px}
+    .filter-field label{font-size:var(--font-label);font-weight:700;color:var(--ink-muted);line-height:1.15}
+    .filter-field--action{flex:0 0 auto;min-width:108px;align-self:stretch;display:flex;flex-direction:column;justify-content:flex-end}
+    .filter-field--action .filter-field__spacer{display:none}
+    .filter-field--action .filter-reset{width:100%;min-width:96px}
+    .filters input,.filters select{height:28px;padding:4px 6px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);font-size:var(--font-body);width:100%;min-width:0;color:var(--ink)}
+    .filters input:focus-visible,.filters select:focus-visible{outline:none;box-shadow:var(--focus-ring);border-color:var(--accent-soft)}
+    .filter-reset{
+      height:28px;padding:0 var(--space-3);border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--ink);
+      font-size:var(--font-body);font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:inherit;
+      transition:background .15s,border-color .15s,color .15s;
+    }
+    .filter-reset:hover{background:var(--paste-sky);border-color:var(--accent-soft);color:var(--ink-headline)}
+    .filter-reset:focus-visible{outline:none;box-shadow:var(--focus-ring)}
     .content{display:flex;flex-direction:column;flex:1;min-height:0;gap:2px;overflow:hidden}
     .kpi-band{flex:0 0 auto;padding:6px 2px 8px;border-bottom:1px solid var(--neutral-200);margin-bottom:2px;background:var(--surface)}
     .kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px 6px;align-content:start;justify-items:stretch}
@@ -59,7 +92,7 @@
     .card--kpi:hover{border-color:var(--neutral-300);box-shadow:0 2px 8px rgba(15,23,42,.08)}
     .card--kpi.active{border-color:var(--brand-blue);box-shadow:0 0 0 1px var(--brand-blue)}
     .card--kpi.active::after{content:'';position:absolute;left:6px;right:6px;bottom:4px;height:2px;background:var(--brand-blue);border-radius:1px}
-    .card--kpi-exec-title{font-family:inherit;font-size:9.5px;font-weight:700;color:var(--ink);line-height:1.2;margin:0 0 2px;max-height:2.4em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical}
+    p.card--kpi-exec-title{font-family:inherit;font-size:9.5px;font-weight:700;color:var(--ink);line-height:1.2;margin:0 0 2px;max-height:2.4em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical}
     .card--kpi-exec-curr{font-family:inherit;font-size:7px;color:var(--ink-muted);line-height:1.25;margin:0}
     .card--kpi-exec-delta{font-family:inherit;font-size:7.5px;color:var(--ink-muted);line-height:1.3;margin:4px 0 2px}
     .card--kpi-exec-delta strong{color:var(--ink);font-weight:700}
@@ -72,24 +105,25 @@
     .card--kpi-exec-tri--good-down{border-top:9px solid #16a34a;margin-bottom:2px}
     .card--kpi-exec-prev{font-family:inherit;font-size:7.5px;color:var(--ink-muted);line-height:1.25;margin:2px 0 0}
     .trend.up{color:var(--perf-green)}.trend.down{color:var(--perf-red)}
-    .charts{display:grid;gap:4px;flex:0 0 auto;min-height:0;align-content:start}
+    .charts{display:grid;gap:6px;flex:0 0 auto;min-height:0;align-content:start;align-items:stretch}
     .charts.layout-a{grid-template-columns:repeat(4,1fr)}
     .charts.layout-b{grid-template-columns:repeat(3,1fr)}
     .charts.layout-c{grid-template-columns:1fr 1fr}
     .charts.layout-d{grid-template-columns:repeat(3,1fr)}
     .charts.layout-e{grid-template-columns:repeat(3,1fr)}
     .panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:3px 5px 4px;min-height:0;flex:1;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;box-shadow:var(--shadow-sm)}
-    .charts .panel--chart{height:96px;min-height:96px;max-height:96px;flex:1 1 0}
+    /* Min height + visible overflow: title + plot + axes + legend (fixed 96px caused clipping after filter reset) */
+    .charts .panel--chart{overflow:visible;min-height:132px;height:auto;max-height:none;flex:1 1 auto}
     .panel--chart{justify-content:flex-start}
     .ptitle{font-size:8px;font-weight:700;color:var(--ink);margin:0 0 1px;line-height:1.15;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .chart-body{display:flex;flex-direction:column;gap:1px;align-items:stretch;justify-content:flex-start;flex:1 1 0;min-height:0;overflow:hidden}
+    .chart-body{display:flex;flex-direction:column;gap:4px;align-items:stretch;justify-content:flex-start;flex:1 1 0;min-height:0;overflow:visible}
     .chart-body--tight{padding:0}
     .chart-body--fill{flex:1 1 0;min-height:0}
     .chart-viewport-wrap{position:relative;flex:1 1 0;min-height:0;display:flex;flex-direction:column}
     .chart-zoom-tools{position:absolute;top:0;right:0;z-index:3;display:flex;gap:2px}
     .chart-zoom-tools button{width:18px;height:16px;padding:0;border:1px solid var(--neutral-200);border-radius:3px;background:#fff;font-size:11px;font-weight:800;line-height:1;color:var(--brand-blue);cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,.08)}
     .chart-zoom-tools button:hover{background:var(--neutral-50);border-color:var(--brand-blue)}
-    .chart-viewport{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:transform .15s ease-out;transform-origin:center center}
+    .chart-viewport{flex:1 1 0;min-height:72px;display:flex;align-items:center;justify-content:center;overflow:visible;padding:2px 4px 4px;transition:transform .15s ease-out;transform-origin:center center}
     .chart-viewport > svg,.chart-viewport .chart-fill-svg{width:100%;height:100%;max-height:100%;display:block;object-fit:contain}
     .chart-viewport .chart-map-root{max-height:100%!important;width:100%;flex:1;min-height:0}
     .chart-viewport .map-panel-inner{min-height:0!important;max-height:100%!important;height:100%!important}
@@ -108,7 +142,9 @@
     .chart-axis-label{font-size:8.5px;fill:#334155;font-weight:600}
     .chart-y-tick{font-size:8px;fill:#475569}
     .combo-bars{opacity:.9}
-    .line-legend,.funnel-legend,.gauge-legend,.map-legend{display:flex;flex-wrap:wrap;gap:4px 8px;font-size:7px;margin:0;padding:0;color:var(--ink-muted);justify-content:center;text-align:center;width:100%;align-items:center;line-height:1.15;flex-shrink:0;max-height:14px;overflow:hidden}
+    /* Legend strip: never clip — users need axes + series meaning after filter reset */
+    .line-legend,.funnel-legend,.gauge-legend{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:8px;margin:0;padding:6px 6px 4px;color:var(--ink);justify-content:center;text-align:center;width:100%;align-items:flex-start;line-height:1.45;flex-shrink:0;border-top:1px solid var(--neutral-200);background:var(--neutral-50)}
+    .map-legend{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:8px;margin:4px 0 0;padding:4px 2px 0;color:var(--ink);justify-content:center;width:100%;line-height:1.4;flex-shrink:0;border-top:1px solid var(--neutral-200);background:var(--neutral-50)}
     .line-legend span{display:inline-flex;align-items:center;gap:4px}
     .legend-v{display:flex;flex-direction:column;gap:3px;font-size:8.5px;color:var(--ink-muted);align-items:center;text-align:center;width:100%}
     .bars{flex:1;min-height:96px;display:flex;align-items:flex-end;gap:4px;padding:0 2px 18px;position:relative}
@@ -136,13 +172,11 @@
     .map-svg .state{fill:#dbeafe;fill-opacity:0.92;stroke:#1e40af;stroke-width:0.55;transition:fill .15s;cursor:pointer}
     .map-svg .state:hover{fill:#93c5fd;fill-opacity:1}
     .map-svg .india-outline{fill:#bfdbfe;stroke:#1e3a8a;stroke-width:0.8}
-    .map-legend{font-size:8px;display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;color:var(--ink-muted)}
     .map-legend span{display:inline-flex;align-items:center;gap:3px}
     .map-dot{width:7px;height:7px;border-radius:50%}
     .gauge{flex:1;min-height:96px;display:flex;align-items:center;justify-content:center;position:relative}
     .gauge .gauge-svg-wrap{position:relative;width:72px;height:72px;display:flex;align-items:center;justify-content:center}
     .gauge .txt{position:absolute;font-weight:800;color:var(--ink);font-size:13px;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
-    .gauge-legend{font-size:8px;text-align:center;color:var(--ink-muted);margin-top:2px}
     .table-panel{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 5px 4px;flex:1 1 0;min-height:0;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-sm);margin-top:2px}
     .table-panel .ptitle{display:flex;align-items:center;justify-content:space-between;gap:8px}
     .table-scroll{overflow:auto;flex:1;min-height:0;border:1px solid var(--neutral-200);border-radius:6px;background:var(--neutral-50)}
@@ -161,67 +195,141 @@
     .pill--open{background:var(--status-open-bg);color:var(--status-open-text);border:1px solid var(--status-open-border)}
     .pill--ip{background:var(--status-ip-bg);color:var(--status-ip-text);border:1px solid var(--status-ip-border)}
     .pill--res{background:var(--status-res-bg);color:var(--status-res-text);border:1px solid var(--status-res-border)}
-    .tooltip{position:fixed;pointer-events:none;z-index:9999;background:rgba(15,23,42,.94);color:#fff;padding:6px 8px;border-radius:6px;font-size:10px;transform:translate(10px,10px);max-width:280px;display:none;line-height:1.35}
+    .tooltip{position:fixed;pointer-events:none;z-index:9999;background:linear-gradient(135deg,#3d3550,#4a3f5c);color:#faf8fc;padding:7px 10px;border-radius:8px;font-size:10px;transform:translate(10px,10px);max-width:280px;display:none;line-height:1.35;box-shadow:0 8px 24px rgba(60,40,80,.2);border:1px solid rgba(255,255,255,.12)}
     /* BSC */
-    .bsc-wrap{display:none;flex-direction:column;gap:3px;min-height:0;overflow:hidden;flex:1}
-    .bsc-wrap.active{display:flex;flex:1;min-height:0}
-    .mis-wrap{display:flex;flex-direction:column;gap:3px;min-height:0;flex:1;overflow:hidden}
-    .mis-wrap.hidden{display:none}
-    .bsc-hero{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
-    .bsc-hero h2{margin:0;font-size:10px;color:var(--ink-muted);font-weight:700}
-    .bsc-hero-row-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
-    .bsc-hero-row-persp{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:2px}
-    .hero-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 4px;text-align:center;min-height:0}
-    .hero-card.hero-high{border-color:var(--brand-blue);box-shadow:0 0 0 1px rgba(0,109,182,.25)}
-    .hero-card h3{margin:0 0 2px;font-size:8px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.03em;line-height:1.15}
-    .hero-card .big{font-size:20px;font-weight:800;color:var(--ink-headline)}
-    .hero-card .big.grad{color:var(--ink-headline)}
-    .hero-card.hero-high .big{font-size:24px}
-    .hero-card .sub{font-size:8px;color:var(--ink-muted);margin-top:2px;line-height:1.15}
-    .hero-card .pct-note{font-size:7px;color:var(--brand-blue);font-weight:600;margin-top:2px}
-    .bsc-rag-strip{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;padding:6px 8px;background:#f1f5f9;border:1px solid var(--border);border-radius:6px;font-size:8px;color:var(--ink);flex-shrink:0;white-space:nowrap}
-    .bsc-rag-strip .lab{font-weight:800;color:#0f172a;margin-right:4px}
-    .bsc-rag-strip .sep{color:#94a3b8;font-weight:300}
-    .rag-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:8px;font-weight:600}
-    .rag-chip.g{background:#dcfce7;color:#14532d;border:1px solid #86efac}
-    .rag-chip.a{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
-    .rag-chip.r{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
-    .bsc-bands-row{display:grid;grid-template-columns:1fr 1fr;gap:4px;min-height:0;flex:0 0 auto}
-    .band-panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:4px}
-    .band-panel--a{border-top:3px solid var(--neutral-300)}
-    .band-panel--b{border-top:3px solid var(--neutral-300)}
-    .band-hdr{font-size:10px;font-weight:800;margin:0;padding:6px 8px;border-radius:6px;text-align:center;letter-spacing:.02em}
-    .band-hdr--a{background:#fecaca;color:#7f1d1d}
-    .band-hdr--b{background:#fde68a;color:#78350f}
-    .bu-chip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-    .bu-chip{padding:6px 4px;text-align:center;font-size:8.5px;font-weight:700;border-radius:6px;border:1px solid var(--border);background:#fff;color:#0f172a;line-height:1.15;box-shadow:var(--shadow-sm)}
-    .band-panel--a .bu-chip{border-top:2px solid var(--neutral-200)}
-    .band-panel--b .bu-chip{border-top:2px solid var(--neutral-200)}
-    .band-stack{display:flex;flex-direction:column;gap:4px}
-    .band-row{display:flex;align-items:center;gap:6px;font-size:9px}
-    .band-row .lbl{width:28px;color:var(--ink-muted);flex-shrink:0}
-    .band-bar{flex:1;height:20px;border-radius:4px;background:var(--neutral-200);overflow:hidden;display:flex}
-    .band-bar span{height:100%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff}
-    .band-red{background:var(--perf-red)}.band-amb{background:var(--perf-amber)}.band-grn{background:var(--perf-green)}
+    .bsc-wrap{
+      display:flex;flex-direction:column;gap:8px;min-width:0;overflow:visible;
+      flex:0 1 auto;padding:0 1px
+    }
+    h2.bsc-page-heading{margin:0 0 8px;font-size:11px;font-weight:800;color:var(--ink-headline);letter-spacing:.02em;line-height:1.25;text-transform:none}
+    h2.bsc-page-heading--block{width:100%}
+    .bsc-hero{display:flex;flex-direction:column;gap:0;flex-shrink:0;min-width:0;padding-bottom:4px}
+    .bsc-kpi-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;min-width:0;width:100%}
+    @media (max-width:1200px){
+      .bsc-kpi-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+    }
+    .bsc-kpi-card{
+      position:relative;display:flex;flex-direction:row;align-items:stretch;min-width:0;
+      background:#fff;border:1px solid var(--neutral-200);border-radius:var(--radius-md);
+      box-shadow:0 1px 3px rgba(15,23,42,.06);overflow:hidden;
+    }
+    .bsc-kpi-card__accent{flex:0 0 5px;min-height:100%;align-self:stretch}
+    .bsc-kpi-card--a .bsc-kpi-card__accent{background:linear-gradient(180deg,var(--brand-purple),#6b1f6e)}
+    .bsc-kpi-card--b .bsc-kpi-card__accent{background:linear-gradient(180deg,var(--brand-blue),#004a80)}
+    .bsc-kpi-card--c .bsc-kpi-card__accent{background:linear-gradient(180deg,var(--brand-green),#007a4d)}
+    .bsc-kpi-card--d .bsc-kpi-card__accent{background:linear-gradient(180deg,var(--brand-cyan),#087fa3)}
+    .bsc-kpi-card--e .bsc-kpi-card__accent{background:linear-gradient(180deg,var(--brand-orange),#c73a18)}
+    .bsc-kpi-card--f .bsc-kpi-card__accent{background:linear-gradient(180deg,var(--brand-magenta),#a83268)}
+    .bsc-kpi-card__body{flex:1;min-width:0;padding:8px 10px 9px 8px;display:flex;flex-direction:column;gap:3px;text-align:left}
+    .bsc-kpi-card__label{margin:0;font-size:7px;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em;line-height:1.2}
+    .bsc-kpi-card__value{margin:0;font-size:clamp(15px,1.8vw,20px);font-weight:800;color:var(--ink);letter-spacing:-.03em;line-height:1.1;font-variant-numeric:tabular-nums}
+    .bsc-kpi-card__context{margin:4px 0 0;font-size:7.5px;font-weight:600;color:var(--ink-muted);line-height:1.25}
+    .bsc-rag-strip{display:flex;align-items:flex-start;gap:6px 8px;flex-wrap:wrap;padding:6px 8px;background:linear-gradient(90deg,var(--paste-sky),var(--paste-lilac));border:1px solid var(--border);border-radius:8px;font-size:7.5px;color:var(--ink);flex-shrink:0;line-height:1.35}
+    .bsc-rag-strip .lab{font-weight:800;color:var(--ink-headline);margin-right:4px}
+    .bsc-rag-strip .sep{color:var(--ink-muted);font-weight:300;opacity:.7}
+    .rag-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:7.5px;font-weight:600;white-space:normal;max-width:100%;line-height:1.3}
+    .rag-chip.g{background:var(--perf-green-soft);color:#2f6b52;border:1px solid #b8e5c8}
+    .rag-chip.a{background:var(--perf-amber-soft);color:#7a5a28;border:1px solid #edd59a}
+    .rag-chip.r{background:var(--perf-red-soft);color:#8b4548;border:1px solid #f0c4c4}
+    .bsc-bands{display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden;border:none;padding:0;margin:0}
+    .bsc-three-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:start;min-height:0;width:100%}
+    .bsc-rank-spotlight{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:5px 6px;min-height:0;width:100%;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-sm);border-top:3px solid #c8d8ec}
+    .bsc-rank-spotlight .bsc-rank-head{margin-bottom:2px;flex-wrap:wrap;gap:4px}
+    .bsc-rank-spotlight .bsc-rank-head h3{font-size:9px;line-height:1.15}
+    .bsc-rank-spotlight .bsc-toggle__btn{padding:3px 6px;font-size:7.5px}
+    .bsc-rank-spotlight .bsc-spotlight-list{flex:0 0 auto;overflow:visible;margin-bottom:0;max-height:none}
+    .bsc-rank-table-block{display:flex;flex-direction:column;gap:4px;min-height:0;min-width:0;overflow:visible;align-self:stretch}
+    .bsc-table-section-title{margin:0;font-size:9.5px;font-weight:800;color:var(--ink-headline);letter-spacing:-.01em;line-height:1.2;flex-shrink:0}
+    .band-panel{
+      width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:6px 6px 8px;box-shadow:var(--shadow-sm);
+      display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden;justify-content:flex-start
+    }
+    .band-panel--a{border-top:4px solid var(--brand-orange)}
+    .band-panel--b{border-top:4px solid var(--brand-cyan)}
+    .bu-chip-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;align-items:stretch}
+    .bu-chip{
+      box-sizing:border-box;min-height:48px;height:100%;
+      display:flex;align-items:center;justify-content:center;
+      text-align:center;padding:6px 8px;font-size:7.5px;font-weight:700;border-radius:6px;border:1px solid transparent;
+      line-height:1.2;word-break:break-word;hyphens:auto;
+      box-shadow:0 1px 2px rgba(15,23,42,.06);transition:transform .12s ease,box-shadow .12s ease
+    }
+    .bu-chip:hover{box-shadow:0 2px 6px rgba(15,23,42,.1)}
+    .bu-chip--g{background:var(--perf-green-soft);color:#1a4d32;border-color:#9dd4b8}
+    .bu-chip--a{background:var(--perf-amber-soft);color:#5c4510;border-color:#e6c88a}
+    .bu-chip--r{background:var(--perf-red-soft);color:#5c282c;border-color:#e8b4b4}
+    .band-stack{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+    .band-row{display:flex;align-items:center;gap:4px;font-size:8px}
+    .band-row .lbl{width:22px;color:var(--ink-muted);flex-shrink:0;font-size:7px}
+    .band-bar{flex:1;height:14px;border-radius:3px;background:var(--neutral-200);overflow:hidden;display:flex}
+    .band-bar span{height:100%;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:700;color:#fff;line-height:1}
+    .band-red{background:#e8a0a0}.band-amb{background:#f0c97a}.band-grn{background:#8ec9a8}
     .rag-legend{font-size:7.5px;line-height:1.35;color:var(--ink-muted);background:var(--neutral-50);padding:6px;border-radius:6px;border:1px dashed var(--border)}
     .rag-legend strong{display:block;color:var(--ink);font-size:8px;margin-bottom:2px}
     .rag-line{margin:2px 0;padding-left:8px;border-left:3px solid var(--neutral-300)}
     .rag-line.g{border-left-color:var(--perf-green)}.rag-line.a{border-left-color:var(--perf-amber)}.rag-line.r{border-left-color:var(--perf-red)}
-    .bsc-rank{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 6px;flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-sm)}
-    .bsc-rank h4{margin:0 0 4px;font-size:10px;color:#1e293b}
-    .bsc-table-wrap{overflow:auto;flex:1;border:1px solid var(--neutral-200);border-radius:6px;background:#fff}
+    .bsc-rank{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:5px 7px;flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-sm)}
+    .bsc-rank-table-block .bsc-table-wrap{flex:0 1 auto;min-height:160px;max-height:min(380px,50vh)}
+    .bsc-rank-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap;flex-shrink:0;margin-bottom:3px}
+    .bsc-rank-head h3{margin:0;font-size:10px;font-weight:800;color:var(--ink-headline);line-height:1.2;flex:1;min-width:0}
+    .bsc-toggle{display:inline-flex;padding:2px;border-radius:999px;background:var(--neutral-100);border:1px solid var(--border);flex-shrink:0;gap:2px}
+    .bsc-toggle__btn{border:none;background:transparent;color:var(--ink-muted);font-size:8.5px;font-weight:700;padding:4px 10px;border-radius:999px;cursor:pointer;font-family:inherit;line-height:1;transition:background .15s,color .15s,box-shadow .15s}
+    .bsc-toggle__btn:hover{color:var(--ink-headline)}
+    .bsc-toggle__btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+    .bsc-toggle__btn.is-active{background:var(--surface);color:var(--ink-headline);box-shadow:0 1px 4px rgba(80,60,100,.1)}
+    .bsc-spotlight-sub{margin:0 0 3px;font-size:7.5px;font-weight:600;color:var(--ink-muted);flex-shrink:0;line-height:1.2}
+    .bsc-spotlight-list{list-style:none;margin:0 0 3px;padding:0;display:flex;flex-direction:column;gap:1px;flex-shrink:0}
+    .bsc-spot-item{display:grid;grid-template-columns:20px 1fr 34px;align-items:center;gap:3px;padding:2px 5px;border-radius:5px;border:1px solid var(--border);font-size:8px;font-weight:600;background:var(--neutral-50)}
+    .bsc-spot-item--top{border-left:3px solid #8ec9a8}
+    .bsc-spot-item--bottom{border-left:3px solid #e8a0a0}
+    .bsc-spot-rank{font-size:8px;font-weight:800;color:var(--ink-muted);text-align:center}
+    .bsc-spot-name{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+    .bsc-spot-score{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-headline)}
+    .bsc-table-wrap{overflow:hidden;flex:1;min-height:0;border:1px solid var(--border);border-radius:8px;background:var(--neutral-50)}
+    #bscLollipop.bsc-table-wrap{overflow:auto;scroll-behavior:smooth}
+    .bsc-table-wrap:focus-visible{outline:none;box-shadow:var(--focus-ring)}
     .bsc-table{width:100%;border-collapse:collapse;font-size:9px;text-align:center}
-    .bsc-table th,.bsc-table td{padding:5px 4px;border:1px solid var(--neutral-200);vertical-align:middle}
-    .bsc-table thead th{background:#fff;font-weight:800;color:#0f172a;font-size:8px}
+    .bsc-table th,.bsc-table td{padding:3px 3px;border:1px solid var(--neutral-200);vertical-align:middle}
+    .bsc-table thead th{background:linear-gradient(180deg,var(--paste-sky),#e8f0f8);font-weight:800;color:var(--ink-headline);font-size:8px}
     .bsc-table tbody td{font-weight:600}
-    .bsc-table .cell-rank{font-weight:800;color:#fff}
-    .rk-1{background:#14532d;color:#fff!important}.rk-2{background:#166534;color:#fff!important}.rk-3{background:#22c55e;color:#14532d!important}
-    .rk-4{background:#eab308;color:#422006!important}.rk-5{background:#ca8a04;color:#422006!important}
-    .rk-6{background:#facc15;color:#713f12!important}.rk-7{background:#fb923c;color:#431407!important}
-    .rk-8{background:#f97316;color:#fff!important}.rk-9{background:#ea580c;color:#fff!important}.rk-10{background:#b91c1c;color:#fff!important}
+    .bsc-table .cell-rank{font-weight:800}
+    .rk-1{background:#b8e0c8;color:#1f4d36!important}.rk-2{background:#c5e8d2;color:#1f4d36!important}.rk-3{background:#d4f0dd;color:#2d5a40!important}
+    .rk-4{background:#f5e6a8;color:#5c4818!important}.rk-5{background:#f8edc4;color:#6a5220!important}
+    .rk-6{background:#fde9b8;color:#6a4810!important}.rk-7{background:#fdd8c4;color:#5c3018!important}
+    .rk-8{background:#f8c8b0;color:#5c2810!important}.rk-9{background:#f0b098;color:#4a2818!important}.rk-10{background:#e8a0a0;color:#4a2020!important}
+    .rk-11{background:#e8dff5;color:#4a3560!important}.rk-12{background:#ddd8f0;color:#453360!important}.rk-13{background:#d4cef0;color:#40305c!important}
+    .rk-14{background:#cdc5eb;color:#3c2c58!important}.rk-15{background:#c6bde6;color:#382854!important}.rk-16{background:#bfb5e1;color:#34244f!important}
     .bsc-bar-cell{min-width:56px;padding:4px!important}
     .bsc-bar-cell .bar-wrap{height:8px;background:var(--neutral-200);border-radius:4px;overflow:hidden}
-    .bsc-bar-cell .bar-fill{height:100%;background:var(--brand-blue);border-radius:4px}
+    .bsc-bar-cell .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent-soft),#9abfe0);border-radius:4px}
+    /* Alternative UI: two-column weighted ladder (same data as table) */
+    .bsc-alt-view-block{padding:2px 0 20px;margin-top:4px;border-top:1px solid var(--neutral-200)}
+    .bsc-alt-view-intro{margin:0 0 10px;font-size:8.5px;font-weight:500;color:var(--ink-muted);line-height:1.45;max-width:72ch}
+    .bsc-alt-split{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-width:0}
+    @media (max-width:900px){.bsc-alt-split{grid-template-columns:1fr}}
+    .bsc-alt-col{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 8px 10px;box-shadow:var(--shadow-sm);min-width:0}
+    .bsc-alt-col-title{margin:0 0 8px;font-size:9.5px;font-weight:800;color:var(--ink-headline);padding-bottom:6px;border-bottom:2px solid var(--neutral-200)}
+    .bsc-alt-col--high .bsc-alt-col-title{border-bottom-color:var(--brand-orange)}
+    .bsc-alt-col--mod .bsc-alt-col-title{border-bottom-color:var(--brand-cyan)}
+    .bsc-alt-rank-root{display:flex;flex-direction:column;gap:6px}
+    .bsc-alt-row{
+      display:grid;grid-template-columns:36px 1fr 52px;gap:8px;align-items:center;min-width:0;
+      padding:6px 8px;border-radius:8px;border:1px solid var(--neutral-200);background:linear-gradient(180deg,#fff,#fafbfc)
+    }
+    .bsc-alt-rank-badge{
+      width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+      font-size:11px;font-weight:800;flex-shrink:0;border:1px solid rgba(0,0,0,.06)
+    }
+    .bsc-alt-main{min-width:0}
+    .bsc-alt-title{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 2px}
+    .bsc-alt-bu{font-size:10px;font-weight:800;color:var(--ink)}
+    .bsc-alt-grp{font-size:7px;font-weight:700;color:var(--ink-muted);padding:2px 6px;border-radius:999px;background:var(--neutral-100);border:1px solid var(--neutral-200)}
+    .bsc-alt-meta{font-size:7.5px;font-weight:600;color:var(--ink-muted);line-height:1.3}
+    .bsc-alt-bar-track{height:8px;background:var(--neutral-200);border-radius:4px;margin-top:6px;overflow:hidden}
+    .bsc-alt-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--brand-blue),var(--brand-purple));opacity:.92}
+    .bsc-alt-ws{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;text-align:right}
+    .bsc-alt-ws-val{font-size:14px;font-weight:800;color:var(--ink-headline);line-height:1;font-variant-numeric:tabular-nums}
+    .bsc-alt-ws-lab{font-size:6.5px;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
     .dual-kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:2px 4px;align-items:stretch}
     .dual-kpi__cell{background:var(--neutral-50);border-radius:8px;padding:5px 4px;text-align:center;border:1px solid var(--border)}
     .dual-kpi__lab{font-size:7px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
@@ -237,9 +345,18 @@
     .power-kpi{display:flex;align-items:center;justify-content:center;gap:14px;padding:4px 8px;flex-wrap:wrap}
     .power-kpi__big{font-size:22px;font-weight:800;color:var(--brand-blue);line-height:1}
     .power-kpi__sub{font-size:8px;color:var(--ink-muted);margin-top:2px;text-align:center}
-    .power-kpi .gauge{min-height:48px;position:relative}
-    .power-kpi .gauge .gauge-svg-wrap{width:48px;height:48px;position:relative}
-    .power-kpi .gauge .txt{font-size:11px}
+    .power-kpi__bar-wrap{flex:1 1 140px;min-width:120px;max-width:min(100%,280px);display:flex;align-items:center}
+    .power-kpi-bar-row{display:flex;align-items:center;gap:8px;width:100%;min-width:0}
+    .power-kpi-bar-track{
+      flex:1;min-width:48px;height:16px;background:var(--neutral-200);border-radius:8px;overflow:hidden;
+      border:1px solid var(--neutral-200);box-shadow:inset 0 1px 2px rgba(15,23,42,.06)
+    }
+    .power-kpi-bar-fill{
+      height:100%;min-width:0;border-radius:7px;
+      background:linear-gradient(90deg,var(--brand-blue),#1e6faa);
+      transition:width .2s ease
+    }
+    .power-kpi-bar-pct{font-size:12px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1;flex-shrink:0;min-width:2.75em;text-align:right}
     .table-heatmap{width:100%;border-collapse:collapse;font-size:8px}
     .table-heatmap th,.table-heatmap td{border:1px solid var(--neutral-200);padding:3px 4px;text-align:center}
     .table-heatmap thead th{background:var(--neutral-100);font-weight:700;color:#334155}
@@ -248,11 +365,13 @@
     .chart-fill-svg .chart-hover:hover,.chart-fill-svg rect.chart-hover:hover,.chart-fill-svg circle.chart-hover:hover{filter:brightness(1.12) drop-shadow(0 2px 6px rgba(28,111,203,.35))}
     .chart-fill-svg path.chart-hover{cursor:pointer;transition:filter .2s ease,opacity .2s ease}
     .chart-fill-svg path.chart-hover:hover{filter:brightness(1.08) drop-shadow(0 2px 8px rgba(14,165,233,.4))}
-    .panel--chart:hover .chart-fill-svg .combo-line,.panel--chart:hover .combo-svg .combo-line{stroke-width:2.6;filter:drop-shadow(0 0 2px rgba(207,63,121,.45))}
+    .panel--chart:hover .chart-fill-svg .combo-line,.panel--chart:hover .combo-svg .combo-line{stroke-width:2.05}
     .thm-cell{cursor:pointer;transition:transform .15s ease,filter .15s ease}
     .thm-cell:hover{transform:scale(1.04);filter:brightness(1.08)}
     .dual-kpi__cell{transition:transform .18s ease,box-shadow .18s ease}
-    .dual-kpi__cell:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(15,23,42,.1)}
+    @media (prefers-reduced-motion: no-preference){
+      .dual-kpi__cell:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(15,23,42,.1)}
+    }
     .chart-body.chart-body--plain{gap:2px}
     .dual-kpi,.power-kpi{flex:1 1 0;min-height:0;align-items:center}
     .chart-body.chart-body--plain .table-heatmap td,.chart-body.chart-body--plain .table-heatmap th{padding:2px 3px}
@@ -261,81 +380,122 @@
   </style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <div class="canvas" id="canvas">
-  <aside class="sidebar">
-    <div class="logo-wrap">
-      <img src="assets/adani-logo.svg" alt="Adani" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='block';" />
-      <div id="logoFallback" class="logo-fallback" style="display:none">adani</div>
-    </div>
-    <div class="nav-title">MIS + BSC</div>
-    <button class="sbtn active" data-page="0">P1 — Incident &amp; leading</button>
-    <button class="sbtn" data-page="1">P2 — CMP &amp; vehicle</button>
-    <button class="sbtn" data-page="2">P3 — Training &amp; hours</button>
-    <button class="sbtn" data-page="3">P4 — Audit &amp; hazard</button>
-    <button class="sbtn" data-page="4">P5 — PTW &amp; governance</button>
-    <button class="sbtn" data-page="5">P6 — BSC executive</button>
-  </aside>
-  <main class="main">
-    <div class="topbar">
-      <div class="topbar__left">
-        <button class="toggle" id="toggleNav" type="button" aria-label="Menu">☰</button>
-        <div id="pageTitle">Adani Group Safety — MIS + BSC</div>
+  <div class="topbar-block">
+    <header class="topbar">
+      <div class="topbar__row topbar__row--primary">
+        <div class="topbar__brand">
+          <div class="topbar__left">
+            <div class="topbar-logo" title="Adani Safety">
+              <img src="assets/adani-safety-logo.png" alt="Adani Safety" height="50" decoding="async" onerror="this.style.display='none';this.parentElement.querySelector('.logo-fallback').style.display='block';" />
+              <span class="logo-fallback" style="display:none">Adani Safety</span>
+            </div>
+          </div>
+          <div class="topbar__titles">
+            <h1 class="dashboard-title" id="dashboardTitle">Adani Group Safety — BSC Executive Scorecard</h1>
+          </div>
+        </div>
+        <time class="topbar__clock" id="clockEl" datetime="2026-04-20" title="Data refresh cadence and last refresh time"><span class="clock-line">Data refreshed: Daily</span><span class="clock-line">Last updated Monday, 20 April 2026</span></time>
       </div>
-      <div class="topbar__clock" id="clockEl" title="Last refresh"></div>
-    </div>
+    </header>
+    <div class="topbar-purple-strip" aria-hidden="true"></div>
+  </div>
+  <div class="filters-wrap" role="search" aria-label="Report filters and slicers">
     <div class="filters" id="filterRow">
-      <input type="date" id="dateFilter" title="Date" />
-      <input type="date" id="lastUpdateFilter" title="Last Update" />
-      <select id="quarterFilter" title="Quarter"><option value="All">Quarter: All</option><option value="Q1 FY26">Q1 FY26</option><option value="Q2 FY26">Q2 FY26</option><option value="Q3 FY26">Q3 FY26</option><option value="Q4 FY26">Q4 FY26</option></select>
-      <select id="buFilter"><option value="All">BU: All</option></select>
-      <select id="siteFilter"><option value="All">Site: All</option><option value="Mumbai HQ">Mumbai HQ</option><option value="Mundra SEZ">Mundra SEZ</option><option value="Ahmedabad">Ahmedabad</option><option value="Raipur">Raipur</option><option value="Hazira">Hazira</option><option value="Kandla">Kandla</option></select>
-      <select id="severityFilter"><option value="All">Severity: All</option><option value="Critical">Critical</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>
-      <select id="statusFilter"><option value="All">Status: All</option><option value="Open">Open</option><option value="In Progress">In Progress</option><option value="Resolved">Resolved</option></select>
-    </div>
-    <p class="theme-hint" id="themeHint"></p>
-
-    <div class="mis-wrap" id="misWrap">
-      <div class="content">
-        <div class="kpi-band">
-          <section class="kpis k15" id="kpiGrid"></section>
-        </div>
-        <section class="charts" id="charts"></section>
-        <section class="table-panel">
-          <div class="ptitle"><span>KPI detail</span><span style="font-weight:500;color:var(--ink-muted);font-size:8px">Click a KPI card to highlight · scroll for more</span></div>
-          <div class="table-scroll">
-            <table class="data-table">
-              <thead><tr><th>KPI</th><th>Current</th><th>Target</th><th>Trend</th><th>Status</th><th>Last update</th><th>Owner</th></tr></thead>
-              <tbody id="tbl"></tbody>
-            </table>
-          </div>
-        </section>
+      <div class="filter-field">
+        <label for="dateFilter">Report date</label>
+        <input type="date" id="dateFilter" name="report-date" autocomplete="off" />
+      </div>
+      <div class="filter-field">
+        <label for="lastUpdateFilter">Last update</label>
+        <input type="date" id="lastUpdateFilter" name="last-update" autocomplete="off" />
+      </div>
+      <div class="filter-field">
+        <label for="quarterFilter">Quarter</label>
+        <select id="quarterFilter" name="quarter"><option value="All">All quarters</option><option value="Q1 FY26">Q1 FY26</option><option value="Q2 FY26">Q2 FY26</option><option value="Q3 FY26">Q3 FY26</option><option value="Q4 FY26">Q4 FY26</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="buFilter">Business unit</label>
+        <select id="buFilter" name="bu"><option value="All">All BUs</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="siteFilter">Site</label>
+        <select id="siteFilter" name="site"><option value="All">All sites</option><option value="Mumbai HQ">Mumbai HQ</option><option value="Mundra SEZ">Mundra SEZ</option><option value="Ahmedabad">Ahmedabad</option><option value="Raipur">Raipur</option><option value="Hazira">Hazira</option><option value="Kandla">Kandla</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="severityFilter">Severity</label>
+        <select id="severityFilter" name="severity"><option value="All">All levels</option><option value="Critical">Critical</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="statusFilter">Status</label>
+        <select id="statusFilter" name="status"><option value="All">All statuses</option><option value="Open">Open</option><option value="In Progress">In Progress</option><option value="Resolved">Resolved</option></select>
+      </div>
+      <div class="filter-field filter-field--action">
+        <span class="filter-field__spacer" aria-hidden="true">&nbsp;</span>
+        <button type="button" class="filter-reset" id="filterReset" title="Clear all slicers: dates, quarter, business unit, site, severity, and status">Reset filters</button>
       </div>
     </div>
+  </div>
 
+  <main id="main-content" class="main" tabindex="-1" lang="en">
     <div class="bsc-wrap" id="bscWrap">
-      <section class="bsc-hero">
-        <h2>Balance scorecard — key elements (involvement % sums to 100%)</h2>
-        <div class="bsc-hero-row-metrics">
-          <div class="hero-card hero-high" data-tip="Peak normalized score across business units (YTD).">
-            <h3>Highest score achieved</h3>
-            <div class="big" id="bscHigh">94%</div>
-            <div class="sub">YTD peak · reference for portfolio</div>
-          </div>
-          <div class="hero-card" data-tip="Count of distinct parameters in the scorecard.">
-            <h3>Key elements (count)</h3>
-            <div class="big" id="bscKeyEl">48</div>
-            <div class="sub">Parameters tracked</div>
-          </div>
-          <div class="hero-card" data-tip="Weighted composite vs target band.">
-            <h3>Performance index</h3>
-            <div class="big" id="bscPerf">82</div>
-            <div class="sub">vs target band</div>
-          </div>
+      <section class="bsc-hero" aria-labelledby="bscOverviewHeading">
+        <h2 class="bsc-page-heading bsc-page-heading--block" id="bscOverviewHeading">Executive balanced scorecard</h2>
+        <div class="bsc-kpi-row" id="bscKpiRow">
+          <article class="bsc-kpi-card bsc-kpi-card--a" data-tip="Peak normalized score across perspectives (YTD).">
+            <span class="bsc-kpi-card__accent" aria-hidden="true"></span>
+            <div class="bsc-kpi-card__body">
+              <p class="bsc-kpi-card__label">Highest score</p>
+              <p class="bsc-kpi-card__value" id="kpiValHighest">94%</p>
+              <p class="bsc-kpi-card__context" id="kpiCtxHighest"></p>
+            </div>
+          </article>
+          <article class="bsc-kpi-card bsc-kpi-card--b" data-tip="Lagging indicators — outcome &amp; exposure metrics.">
+            <span class="bsc-kpi-card__accent" aria-hidden="true"></span>
+            <div class="bsc-kpi-card__body">
+              <p class="bsc-kpi-card__label">Lagging Indicators Score</p>
+              <p class="bsc-kpi-card__value" id="kpiValLagging">22%</p>
+              <p class="bsc-kpi-card__context" id="kpiCtxLagging"></p>
+            </div>
+          </article>
+          <article class="bsc-kpi-card bsc-kpi-card--c" data-tip="Leading indicators — proactive &amp; preventive metrics.">
+            <span class="bsc-kpi-card__accent" aria-hidden="true"></span>
+            <div class="bsc-kpi-card__body">
+              <p class="bsc-kpi-card__label">Leading Indicators Score</p>
+              <p class="bsc-kpi-card__value" id="kpiValLeading">18%</p>
+              <p class="bsc-kpi-card__context" id="kpiCtxLeading"></p>
+            </div>
+          </article>
+          <article class="bsc-kpi-card bsc-kpi-card--d" data-tip="HR perspective — people &amp; culture.">
+            <span class="bsc-kpi-card__accent" aria-hidden="true"></span>
+            <div class="bsc-kpi-card__body">
+              <p class="bsc-kpi-card__label">HR Perspective Score</p>
+              <p class="bsc-kpi-card__value" id="kpiValHr">20%</p>
+              <p class="bsc-kpi-card__context" id="kpiCtxHr"></p>
+            </div>
+          </article>
+          <article class="bsc-kpi-card bsc-kpi-card--e" data-tip="Assurance — audits, compliance &amp; verification.">
+            <span class="bsc-kpi-card__accent" aria-hidden="true"></span>
+            <div class="bsc-kpi-card__body">
+              <p class="bsc-kpi-card__label">Assurance Score</p>
+              <p class="bsc-kpi-card__value" id="kpiValAssurance">19%</p>
+              <p class="bsc-kpi-card__context" id="kpiCtxAssurance"></p>
+            </div>
+          </article>
+          <article class="bsc-kpi-card bsc-kpi-card--f" data-tip="Leadership &amp; governance.">
+            <span class="bsc-kpi-card__accent" aria-hidden="true"></span>
+            <div class="bsc-kpi-card__body">
+              <p class="bsc-kpi-card__label">Leadership &amp; Governance Score</p>
+              <p class="bsc-kpi-card__value" id="kpiValLeadership">21%</p>
+              <p class="bsc-kpi-card__context" id="kpiCtxLeadership"></p>
+            </div>
+          </article>
         </div>
-        <div class="bsc-hero-row-persp" id="bscPerspRow"></div>
       </section>
-      <section class="bsc-bands" style="display:flex;flex-direction:column;gap:5px;min-height:0">
-        <div class="bsc-rag-strip" title="Performance band (score)">
+      <section class="bsc-bands" aria-labelledby="bandsHeading">
+        <h3 id="bandsHeading" class="visually-hidden">Risk groups and performance bands</h3>
+        <div class="bsc-rag-strip" role="note" aria-label="Performance band definitions for score thresholds">
           <span class="lab">Performance band (score)</span>
           <span class="sep">|</span>
           <span class="rag-chip g"><strong>Green</strong> (≥80): Strong performance and proactive safety culture — sustain.</span>
@@ -344,54 +504,77 @@
           <span class="sep">|</span>
           <span class="rag-chip r"><strong>Red</strong> (&lt;65): Below expectations — immediate attention.</span>
         </div>
-        <div class="bsc-bands-row">
-          <div class="band-panel band-panel--a">
-            <div class="band-hdr band-hdr--a">High risk BU group (Group A)</div>
+        <div class="bsc-three-col">
+          <div class="band-panel band-panel--a" role="region" aria-label="High risk BU group, Group A">
             <div class="bu-pairs" id="buPairsA"></div>
             <div class="band-stack" id="bandGroupA"></div>
           </div>
-          <div class="band-panel band-panel--b">
-            <div class="band-hdr band-hdr--b">Moderate risk BU group (Group B)</div>
+          <div class="band-panel band-panel--b" role="region" aria-label="Moderate risk BU group, Group B">
             <div class="bu-pairs" id="buPairsB"></div>
             <div class="band-stack" id="bandGroupB"></div>
           </div>
+          <div class="bsc-rank-spotlight" id="bscRankSection" aria-labelledby="rankHeading">
+            <div class="bsc-rank-head">
+              <h3 id="rankHeading">Business ranking</h3>
+              <div class="bsc-toggle" role="tablist" aria-label="Spotlight: top or bottom performers by raw score">
+                <button type="button" class="bsc-toggle__btn is-active" role="tab" data-spotlight="top" id="tabSpotTop" aria-selected="true" aria-controls="spotlightList" tabindex="0">Top 5</button>
+                <button type="button" class="bsc-toggle__btn" role="tab" data-spotlight="bottom" id="tabSpotBottom" aria-selected="false" aria-controls="spotlightList" tabindex="-1">Bottom 5</button>
+              </div>
+            </div>
+            <p class="bsc-spotlight-sub" id="spotlightSub">Highest raw scores · portfolio</p>
+            <ul class="bsc-spotlight-list" id="spotlightList" aria-live="polite" aria-labelledby="spotlightSub"></ul>
+          </div>
         </div>
       </section>
-      <section class="bsc-rank">
-        <h4>Balanced scorecard — BU ranking</h4>
-        <div class="bsc-table-wrap" id="bscLollipop"></div>
+      <section class="bsc-rank-table-block" aria-labelledby="rankTableHeading">
+        <h3 id="rankTableHeading" class="bsc-table-section-title">All businesses — full ranking (all BUs)</h3>
+        <div class="bsc-table-wrap" id="bscLollipop" role="region" aria-label="Full business ranking table" tabindex="0"></div>
+      </section>
+      <section class="bsc-alt-view-block" aria-labelledby="bscAltHeading">
+        <h3 id="bscAltHeading" class="bsc-table-section-title">Alternative view — grouped weighted ladder</h3>
+        <p class="bsc-alt-view-intro">Same data as the table above, in a different layout: two columns by risk group. Each row shows overall rank (color), business, in-group rank, percentile, weight, a weighted-score bar (scaled to max), and weighted score.</p>
+        <div class="bsc-alt-split">
+          <div class="bsc-alt-col bsc-alt-col--high">
+            <h4 class="bsc-alt-col-title">High risk BU group</h4>
+            <div id="bscAltHigh" class="bsc-alt-rank-root" role="list"></div>
+          </div>
+          <div class="bsc-alt-col bsc-alt-col--mod">
+            <h4 class="bsc-alt-col-title">Moderate risk BU group</h4>
+            <div id="bscAltMod" class="bsc-alt-rank-root" role="list"></div>
+          </div>
+        </div>
       </section>
     </div>
   </main>
 </div>
 <div class="tooltip" id="tooltip"></div>
-<script src="mis-pages-data.js"></script>
 <script src="converter-mis-data.js"></script>
 <script>
-const BSC_PAGE = { name: 'Page 6 - BSC Executive Scorecard', type: 'bsc' };
-const pages = [...window.MIS_PAGE_DEF.map(p => ({ name: p.name, theme: p.theme, kpis: p.kpis })), BSC_PAGE];
-const pageUIs = [
-  { kpiCount: 15, tableRows: 15, chartLayout: 'layout-a', charts: ['combo','histogram','treemap','line_bar'] },
-  { kpiCount: 15, tableRows: 15, chartLayout: 'layout-b', charts: ['line_bar_m','variance_bars','dual_kpi'] },
-  { kpiCount: 15, tableRows: 15, chartLayout: 'layout-c', charts: ['stream','table_heatmap'] },
-  { kpiCount: 15, tableRows: 15, chartLayout: 'layout-d', charts: ['map','mekko','multi_kpi'] },
-  { kpiCount: 15, tableRows: 15, chartLayout: 'layout-e', charts: ['power_kpi','combo','line_bar'] }
-];
+const BSC_PAGE = { name: 'Adani Group Safety — BSC Executive Scorecard', type: 'bsc' };
+const pages = [BSC_PAGE];
+const pageUIs = [{ kpiCount: 15, tableRows: 15, chartLayout: 'layout-a', charts: [] }];
 const BU_OPTIONS = ['All','Power','Ports','AESL','Cements','Copper','Green PVC','Mining','Gas','Airports','MSPVL','Defense & Aerospace','ANIL-Wind','ANIL-BESS','Green Energy','Realty','RMRW','AEML','Data Center','Logistics','NMDPL','Smart Meters','Hydro PSP','Agri fresh','Dredging'];
 const BSC_PAIRS_A = ['Power','Ports','Cements','Copper','Green PVC','Mining','Gas','Airports','MSPVL','Defense & Aerospace','ANIL-Wind','ANIL-BESS'];
 const BSC_PAIRS_B = ['AESL','Green Energy','Realty','RMRW','AEML','Data Center','Logistics','NMDPL','Smart Meters','Hydro PSP','Agri fresh','Dredging'];
 const bscUnits = [
-  { u: 'BU1', grp: 'High Risk', raw: 92, rk: 1, pct: 100, w: 0.65, ws: 65, oa: 1 },
-  { u: 'BU2', grp: 'High Risk', raw: 88, rk: 2, pct: 80, w: 0.65, ws: 52, oa: 2 },
-  { u: 'BU3', grp: 'High Risk', raw: 78, rk: 3, pct: 60, w: 0.65, ws: 39, oa: 3 },
-  { u: 'BU4', grp: 'High Risk', raw: 70, rk: 4, pct: 40, w: 0.65, ws: 26, oa: 6 },
-  { u: 'BU5', grp: 'High Risk', raw: 65, rk: 5, pct: 20, w: 0.65, ws: 13, oa: 9 },
-  { u: 'BU6', grp: 'Moderate Risk', raw: 75, rk: 1, pct: 100, w: 0.35, ws: 35, oa: 4 },
-  { u: 'BU7', grp: 'Moderate Risk', raw: 68, rk: 2, pct: 80, w: 0.35, ws: 28, oa: 5 },
-  { u: 'BU8', grp: 'Moderate Risk', raw: 60, rk: 3, pct: 60, w: 0.35, ws: 21, oa: 7 },
-  { u: 'BU9', grp: 'Moderate Risk', raw: 55, rk: 4, pct: 40, w: 0.35, ws: 14, oa: 8 },
-  { u: 'BU10', grp: 'Moderate Risk', raw: 50, rk: 5, pct: 20, w: 0.35, ws: 7, oa: 10 }
+  { biz: 'Power', grp: 'High Risk', raw: 94, rk: 1, pct: 100, w: 0.65, ws: 61 },
+  { biz: 'Ports', grp: 'High Risk', raw: 91, rk: 2, pct: 94, w: 0.65, ws: 59 },
+  { biz: 'Cements', grp: 'High Risk', raw: 88, rk: 3, pct: 88, w: 0.65, ws: 57 },
+  { biz: 'Copper', grp: 'High Risk', raw: 85, rk: 4, pct: 81, w: 0.65, ws: 53 },
+  { biz: 'Mining', grp: 'High Risk', raw: 82, rk: 5, pct: 75, w: 0.65, ws: 49 },
+  { biz: 'Gas', grp: 'High Risk', raw: 80, rk: 6, pct: 69, w: 0.65, ws: 45 },
+  { biz: 'Airports', grp: 'High Risk', raw: 78, rk: 7, pct: 63, w: 0.65, ws: 41 },
+  { biz: 'AESL', grp: 'Moderate Risk', raw: 76, rk: 1, pct: 100, w: 0.35, ws: 35 },
+  { biz: 'Green Energy', grp: 'Moderate Risk', raw: 74, rk: 2, pct: 88, w: 0.35, ws: 31 },
+  { biz: 'Logistics', grp: 'Moderate Risk', raw: 70, rk: 3, pct: 75, w: 0.35, ws: 26 },
+  { biz: 'Realty', grp: 'Moderate Risk', raw: 67, rk: 4, pct: 63, w: 0.35, ws: 22 },
+  { biz: 'Data Center', grp: 'Moderate Risk', raw: 64, rk: 5, pct: 50, w: 0.35, ws: 18 },
+  { biz: 'NMDPL', grp: 'Moderate Risk', raw: 60, rk: 6, pct: 38, w: 0.35, ws: 13 },
+  { biz: 'Agri fresh', grp: 'Moderate Risk', raw: 56, rk: 7, pct: 25, w: 0.35, ws: 9 },
+  { biz: 'Dredging', grp: 'Moderate Risk', raw: 52, rk: 8, pct: 13, w: 0.35, ws: 5 },
+  { biz: 'Smart Meters', grp: 'Moderate Risk', raw: 48, rk: 9, pct: 6, w: 0.35, ws: 2 }
 ];
+let bscSpotlightMode = 'top';
 let pageIdx = 0;
 let selectedKpi = '';
 let mapZoom = 1;
@@ -401,7 +584,6 @@ const today = '2026-03-25';
 function hashSeed(s){ let h=2166136261; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619);} return h>>>0; }
 function stableVal(page, kpi, salt){ return 55 + (hashSeed(page+'|'+kpi+'|'+salt) % 40); }
 
-const UPDATES = ['2026-03-25','2026-03-24','2026-03-23','2026-03-22','2026-03-21'];
 function seedRowsFromConverter(){
   const cm = window.CONVERTER_MIS && window.CONVERTER_MIS.master;
   if (!cm || !cm.length) return false;
@@ -423,28 +605,7 @@ function seedRowsFromConverter(){
   });
   return true;
 }
-if (!seedRowsFromConverter()) {
-  window.MIS_PAGE_DEF.forEach((p, pi) => p.kpis.forEach((k, ix) => {
-    const base = stableVal(pi, k, 'v');
-    const jitter = (hashSeed(pi+k+ix+'j') % 7) - 3;
-    const value = Math.min(100, Math.max(12, base + jitter));
-    const target = 100;
-    const delta = (hashSeed(pi+k+'d') % 25) - 8;
-    const trend = delta >= 0 ? 'up' : 'down';
-    const bu = BU_OPTIONS[1 + (hashSeed(k+ix) % (BU_OPTIONS.length-1))];
-    const site = ['Mumbai HQ','Mundra SEZ','Ahmedabad','Raipur','Hazira','Kandla'][hashSeed(k) % 6];
-    const severity = ['Critical','High','Medium','Low'][hashSeed(k+pi) % 4];
-    let status = 'In Progress';
-    if (value >= 90) status = 'Resolved';
-    else if (value < 65) status = 'Open';
-    rows.push({
-      page: pi, kpi: k, value, target, delta, trend, status,
-      lastUpdate: UPDATES[ix % UPDATES.length],
-      owner: ix % 2 ? 'HSE Analytics' : 'BU Safety',
-      bu, site, severity
-    });
-  }));
-}
+/* BSC-only prototype: MIS rows come from converter CSV only when present. */
 
 (function fillBuFilter(){
   const sel = document.getElementById('buFilter');
@@ -497,6 +658,7 @@ document.addEventListener('mouseout', (e) => {
 });
 
 function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function escAttr(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 /** Shared plot area for bar/line charts: Y = score 0–100, bottom baseline. */
 function chartYGrid(w, plotTop, plotBottom, plotLeft) {
@@ -505,11 +667,12 @@ function chartYGrid(w, plotTop, plotBottom, plotLeft) {
   let g = '';
   ticks.forEach(t => {
     const y = plotBottom - (t / 100) * plotH;
-    g += `<line x1="${plotLeft}" y1="${y}" x2="${w - 4}" y2="${y}" stroke="#e2e8f0" stroke-width="0.75"/>`;
-    g += `<text x="${plotLeft - 4}" y="${y + 3}" text-anchor="end" fill="#475569" font-size="8" font-weight="600">${t}</text>`;
+    g += `<line x1="${plotLeft}" y1="${y}" x2="${w - 4}" y2="${y}" stroke="#cbd5e1" stroke-width="0.85"/>`;
+    g += `<text x="${plotLeft - 5}" y="${y}" text-anchor="end" dominant-baseline="middle" fill="#334155" font-size="8.5" font-weight="700">${t}</text>`;
   });
   const cy = (plotTop + plotBottom) / 2;
-  g += `<text x="9" y="${cy}" fill="#334155" font-size="8.5" font-weight="600" transform="rotate(-90 9 ${cy})" text-anchor="middle">Score (0–100)</text>`;
+  const yLabX = Math.max(10, plotLeft - 52);
+  g += `<text x="${yLabX}" y="${cy}" fill="#1e293b" font-size="9" font-weight="700" transform="rotate(-90 ${yLabX} ${cy})" text-anchor="middle">Score (0–100)</text>`;
   return g;
 }
 
@@ -572,7 +735,7 @@ function execKpiCardInner(mm, k){
   const deltaStr = (d >= 0 ? '+' : '') + d + '%';
   const tri = execKpiTriClass(k, mm.trend);
   const show = isFinite(curVal) ? Math.round(curVal) : 0;
-  return `<h3 class="card--kpi-exec-title">${esc(k)}</h3>
+  return `<p class="card--kpi-exec-title">${esc(k)}</p>
 <div class="card--kpi-exec-mid">
   <span class="card--kpi-exec-pct">${show}%</span>
   <span class="card--kpi-exec-tri ${tri}" aria-hidden="true"></span>
@@ -686,23 +849,6 @@ function rowForKpi(k){
   return rows.find(function (x) { return x.page === pageIdx && x.kpi === k; });
 }
 
-function bindChartZoomHost(host) {
-  host.addEventListener('click', e => {
-    const btn = e.target.closest('[data-chart-zoom]');
-    if (!btn || !host.contains(btn)) return;
-    const wrap = btn.closest('.chart-viewport-wrap');
-    const vp = wrap && wrap.querySelector('.chart-viewport');
-    if (!vp) return;
-    let s = parseFloat(vp.getAttribute('data-scale') || '1');
-    const act = btn.getAttribute('data-chart-zoom');
-    if (act === 'in') s = Math.min(2.5, Math.round((s + 0.14) * 100) / 100);
-    else if (act === 'out') s = Math.max(0.5, Math.round((s - 0.14) * 100) / 100);
-    else s = 1;
-    vp.setAttribute('data-scale', String(s));
-    vp.style.transform = s === 1 ? '' : `scale(${s})`;
-  });
-}
-
 function renderCharts(ui){
   const el = document.getElementById('charts');
   const kpis = pages[pageIdx].kpis || [];
@@ -728,7 +874,7 @@ function renderCharts(ui){
   const months = ['Apr','May','Jun','Jul','Aug','Sep'];
   for (const c of ui.charts){
     if (c === 'combo'){
-      const W = 280, plotTop = 12, plotBottom = 70, plotLeft = 28;
+      const W = 280, Hsvg = 92, plotTop = 12, plotBottom = 70, plotLeft = 32;
       const plotH = plotBottom - plotTop;
       const pm6 = pageKpiMetrics(6);
       const raw = pm6.length
@@ -756,39 +902,40 @@ function renderCharts(ui){
       }).join('');
       const xLabs = raw.map((_, i) => {
         const cx = plotLeft + 11 + i * xStep;
-        return `<text x="${cx}" y="${plotBottom + 9}" text-anchor="middle" fill="#334155" font-size="8" font-weight="600">${esc(months[i] || '')}</text>`;
+        return `<text x="${cx}" y="${plotBottom + 10}" text-anchor="middle" fill="#1e293b" font-size="8" font-weight="700">${esc(months[i] || '')}</text>`;
       }).join('');
       const leg = `<div class="line-legend"><span style="color:#006DB6">■</span> Bars (actual) · <span style="color:#F04C23">●</span> Trend</div>`;
       addPanel((kNames[0] || kpis[0] || 'Portfolio') + ' · actual vs trend',
-        `<svg class="combo-svg chart-fill-svg" viewBox="0 0 280 84" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        `<svg class="combo-svg chart-fill-svg" viewBox="0 0 ${W} ${Hsvg}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
           ${chartYGrid(W, plotTop, plotBottom, plotLeft)}
           ${bars}
           <polyline class="combo-line" points="${poly}" fill="none" stroke="#F04C23" stroke-width="2" stroke-linecap="round"/>
           ${dots}
           ${xLabs}
-          <text x="140" y="81" text-anchor="middle" fill="#64748b" font-size="7" font-weight="600">Month (X)</text>
+          <text x="140" y="${Hsvg - 3}" text-anchor="middle" fill="#475569" font-size="8" font-weight="700">Month (X)</text>
         </svg>${leg}`);
     }
     if (c === 'histogram'){
       const scores = pageKpiMetrics(15).map(x => Math.min(100, Math.max(0, Math.round(Number(x.v)))));
       const bins = [0, 0, 0, 0, 0];
       scores.forEach(function (v) { bins[Math.min(4, Math.floor(v / 20))]++; });
-      const W = 260, H = 72, L = 26, B = 58;
+      const W = 260, H = 80, L = 30, B = 54, topPlot = 22;
       const maxB = Math.max(...bins, 1);
       const bw = (W - L - 8) / bins.length;
       const rects = bins.map((b, i) => {
-        const h = (b / maxB) * (B - 14);
+        const h = (b / maxB) * (B - topPlot);
         const x = L + 4 + i * bw;
         const y = B - h;
         return `<rect class="chart-hover" x="${x}" y="${y}" width="${bw - 3}" height="${h}" rx="2" fill="#006DB6" data-tip="Bin ${i + 1}: ${b} KPIs"/>`;
       }).join('');
-      const xLabs = ['0–20','21–40','41–60','61–80','81–100'].map((lab, i) => `<text x="${L + 4 + i * bw + (bw - 3) / 2}" y="${B + 10}" text-anchor="middle" fill="#64748b" font-size="6.5">${lab}</text>`).join('');
+      const xLabs = ['0–20','21–40','41–60','61–80','81–100'].map((lab, i) => `<text x="${L + 4 + i * bw + (bw - 3) / 2}" y="${B + 12}" text-anchor="middle" fill="#1e293b" font-size="7.5" font-weight="700">${lab}</text>`).join('');
       addPanel('Histogram · score bins · ' + (kpis[1] || 'PSI'),
-        `<svg class="chart-fill-svg hist-svg" viewBox="0 0 260 72" preserveAspectRatio="xMidYMid meet">
-          <text x="${W/2}" y="10" text-anchor="middle" fill="#6D6E71" font-size="8" font-weight="600">Frequency by score band</text>
-          <line x1="${L}" y1="${B}" x2="${W-4}" y2="${B}" stroke="#cbd5e1"/>
+        `<svg class="chart-fill-svg hist-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+          <text x="${W/2}" y="11" text-anchor="middle" fill="#334155" font-size="8.5" font-weight="700">Frequency by score band</text>
+          <line x1="${L}" y1="${B}" x2="${W-4}" y2="${B}" stroke="#94a3b8" stroke-width="1"/>
           ${rects}
           ${xLabs}
+          <text x="${W/2}" y="${H - 4}" text-anchor="middle" fill="#475569" font-size="8" font-weight="700">Score band (X)</text>
         </svg>
         <div class="line-legend">X = score band · Y = KPI count (histogram)</div>`);
     }
@@ -822,7 +969,7 @@ function renderCharts(ui){
     }
     if (c === 'line_bar' || c === 'line_bar_m'){
       const useMonths = c === 'line_bar_m';
-      const W = 268, plotTop = 14, plotBottom = 64, plotLeft = 30, H = 86;
+      const W = 268, plotTop = 14, plotBottom = 64, plotLeft = 32, H = 92;
       const plotH = plotBottom - plotTop;
       const avg = pageKpiAverage();
       const vals = useMonths
@@ -849,7 +996,7 @@ function renderCharts(ui){
         const lineY = vals.map(({ v }) => plotBottom - (v / 100) * plotH);
         const poly = vals.map((_, i) => `${cx(i)},${lineY[i]}`).join(' ');
         const dots = vals.map(({ k }, i) => `<circle class="chart-hover" cx="${cx(i)}" cy="${lineY[i]}" r="3" fill="#F04C23" stroke="#fff" stroke-width="0.75" data-tip="${esc(k)}: ${vals[i].v}"/>`).join('');
-        const xLabs = vals.map(({ k }, i) => `<text x="${cx(i)}" y="${plotBottom + 8}" text-anchor="middle" fill="#334155" font-size="7" font-weight="600">${esc(String(k).slice(0, 9))}</text>`).join('');
+        const xLabs = vals.map(({ k }, i) => `<text x="${cx(i)}" y="${plotBottom + 9}" text-anchor="middle" fill="#1e293b" font-size="7.5" font-weight="700">${esc(String(k).slice(0, 9))}</text>`).join('');
         const xTitle = useMonths ? 'Month (X)' : 'KPI name (X)';
         const panelTitle = useMonths ? 'Line & column · period trend' : 'Line & column · KPI trend';
         addPanel(panelTitle,
@@ -859,7 +1006,7 @@ function renderCharts(ui){
             <polyline class="combo-line" points="${poly}" fill="none" stroke="#F04C23" stroke-width="1.85" stroke-linejoin="round" stroke-linecap="round"/>
             ${dots}
             ${xLabs}
-            <text x="${W / 2}" y="${H - 2}" text-anchor="middle" fill="#64748b" font-size="7" font-weight="600">${xTitle}</text>
+            <text x="${W / 2}" y="${H - 4}" text-anchor="middle" fill="#475569" font-size="8" font-weight="700">${xTitle}</text>
           </svg>
           <div class="line-legend"><span style="color:#006DB6">■</span> Columns (value) · <span style="color:#F04C23">●</span> Line (trend) · Y = score 0–100</div>`);
       }
@@ -879,7 +1026,7 @@ function renderCharts(ui){
           const y = baseY + i * rowH;
           const wBar = (v / 100) * trackW;
           const gap = Math.round(tgt - v);
-          return `<text x="4" y="${y + 8}" font-size="5.5" fill="#231F20" font-weight="700">${esc(String(p.k).slice(0, 28))}</text>
+          return `<text x="4" y="${y + 8}" font-size="6.5" fill="#1e293b" font-weight="700">${esc(String(p.k).slice(0, 24))}</text>
             <rect x="${lx}" y="${y + 3}" width="${trackW}" height="7" fill="#f1f5f9" rx="2"/>
             <rect class="chart-hover" x="${lx}" y="${y + 3}" width="${Math.max(0.5, wBar)}" height="7" fill="#006DB6" rx="2" data-tip="${esc(p.k)}: actual ${v} · target ${tgt} · gap ${gap}"/>
             <line x1="${lx + trackW}" y1="${y + 2}" x2="${lx + trackW}" y2="${y + 11}" stroke="#F04C23" stroke-width="2"/>
@@ -987,14 +1134,19 @@ function renderCharts(ui){
     }
     if (c === 'power_kpi'){
       const g = Math.min(100, Math.max(0, Math.round(pageKpiAverage() * nu)));
-      const r = 17, cx = 24, cy = 24, C = 2 * Math.PI * r, dash = Math.max(0.01, (g / 100) * C);
-      const ringSvg = `<svg class="gauge-svg" width="48" height="48" viewBox="0 0 48 48" aria-hidden="true"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="5"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#006DB6" stroke-width="5" stroke-linecap="round" stroke-dasharray="${dash} ${C}" transform="rotate(-90 ${cx} ${cy})"/></svg>`;
-      addPanel('Power KPI · index + gauge',
+      addPanel('Power KPI · index + progress bar',
         `<div class="power-kpi" data-tip="Composite safety index ${g} · target 85">
           <div><div class="power-kpi__big">${g}</div><div class="power-kpi__sub">Composite index · vs target 85</div></div>
-          <div class="gauge" style="min-height:48px"><div class="gauge-svg-wrap">${ringSvg}</div><div class="txt" style="font-size:11px">${g}</div></div>
+          <div class="power-kpi__bar-wrap">
+            <div class="power-kpi-bar-row">
+              <div class="power-kpi-bar-track" role="progressbar" aria-valuenow="${g}" aria-valuemin="0" aria-valuemax="100" aria-label="Composite index ${g} percent">
+                <div class="power-kpi-bar-fill" style="width:${g}%"></div>
+              </div>
+              <span class="power-kpi-bar-pct">${g}%</span>
+            </div>
+          </div>
         </div>
-        <div class="line-legend">Index + ring (solid brand blue)</div>`, { plain: true });
+        <div class="line-legend">Index + horizontal bar (value always visible)</div>`, { plain: true });
     }
   }
   el.querySelectorAll('[data-zoom]').forEach(btn=>{
@@ -1006,48 +1158,133 @@ function renderCharts(ui){
   });
 }
 
+function rankBscUnitsByRaw(){
+  return bscUnits.slice().sort(function (a, b) { return b.raw - a.raw; }).map(function (x, i) {
+    return Object.assign({}, x, { oa: i + 1 });
+  });
+}
+
+function renderBscSpotlight(ranked){
+  const sub = document.getElementById('spotlightSub');
+  const list = document.getElementById('spotlightList');
+  if (!list) return;
+  const top = bscSpotlightMode === 'top';
+  if (sub) {
+    const n = ranked.length;
+    const lo = Math.max(1, n - 4);
+    sub.textContent = top
+      ? 'Top 5 businesses · highest raw score (ranks #1–#5)'
+      : 'Bottom 5 businesses · lowest raw score (ranks #' + lo + '–#' + n + ')';
+  }
+  const pick = top ? ranked.slice(0, 5) : ranked.slice(-5).reverse();
+  list.innerHTML = pick.map(function (x) {
+    const rowCls = top ? 'bsc-spot-item bsc-spot-item--top' : 'bsc-spot-item bsc-spot-item--bottom';
+    const al = 'Overall rank ' + x.oa + ', ' + x.biz + ', raw score ' + x.raw;
+    return '<li class="' + rowCls + '" aria-label="' + escAttr(al) + '"><span class="bsc-spot-rank" aria-hidden="true">' + x.oa + '</span><span class="bsc-spot-name" aria-hidden="true" data-tip="' + esc(x.biz) + ' · ' + esc(x.grp) + '">' + esc(x.biz) + '</span><span class="bsc-spot-score" aria-hidden="true">' + x.raw + '</span></li>';
+  }).join('');
+  syncSpotlightTabs();
+}
+
+function syncSpotlightTabs(){
+  const top = document.getElementById('tabSpotTop');
+  const bot = document.getElementById('tabSpotBottom');
+  if (!top || !bot) return;
+  const isTop = bscSpotlightMode === 'top';
+  top.classList.toggle('is-active', isTop);
+  bot.classList.toggle('is-active', !isTop);
+  top.setAttribute('aria-selected', isTop ? 'true' : 'false');
+  bot.setAttribute('aria-selected', isTop ? 'false' : 'true');
+  top.tabIndex = isTop ? 0 : -1;
+  bot.tabIndex = isTop ? -1 : 0;
+}
+
+function buRagScore(name, group){
+  return 48 + (hashSeed('buRag|' + group + '|' + name) % 50);
+}
+function buRagClassFromScore(score){
+  if (score >= 80) return 'bu-chip--g';
+  if (score >= 65) return 'bu-chip--a';
+  return 'bu-chip--r';
+}
+function buRagLabel(score){
+  if (score >= 80) return 'Green';
+  if (score >= 65) return 'Amber';
+  return 'Red';
+}
 function renderBuPairs(){
   const a = document.getElementById('buPairsA');
   const b = document.getElementById('buPairsB');
   a.className = 'bu-chip-grid';
   b.className = 'bu-chip-grid';
-  a.innerHTML = BSC_PAIRS_A.map(x=>`<div class="bu-chip" data-tip="Group A · ${esc(x)}">${esc(x)}</div>`).join('');
-  b.innerHTML = BSC_PAIRS_B.map(x=>`<div class="bu-chip" data-tip="Group B · ${esc(x)}">${esc(x)}</div>`).join('');
+  function chipHtml(x, grp){
+    const sc = buRagScore(x, grp);
+    const rag = buRagClassFromScore(sc);
+    const lab = buRagLabel(sc);
+    const g = grp === 'A' ? 'A' : 'B';
+    return '<div class="bu-chip ' + rag + '" data-tip="Group ' + g + ' · ' + esc(x) + ' · score ' + sc + ' (' + lab + ' band)">' + esc(x) + '</div>';
+  }
+  a.innerHTML = BSC_PAIRS_A.map(function (x) { return chipHtml(x, 'A'); }).join('');
+  b.innerHTML = BSC_PAIRS_B.map(function (x) { return chipHtml(x, 'B'); }).join('');
+}
+
+/** Per-BU score for balanced scorecard metrics (prototype: raw from data; others deterministic by BU). */
+function scoreForBuMetric(biz, metricKey){
+  if (metricKey === 'raw') {
+    const u = bscUnits.find(function (x) { return x.biz === biz; });
+    if (u) return u.raw;
+    return 55 + (hashSeed('raw|' + biz) % 40);
+  }
+  return 52 + (hashSeed(biz + '|kpi|' + metricKey) % 43);
+}
+
+function allBuNames(){
+  return BU_OPTIONS.filter(function (b) { return b !== 'All'; });
+}
+
+function findTopBuForMetric(metricKey){
+  const names = allBuNames();
+  var bestName = names[0];
+  var bestScore = -1;
+  names.forEach(function (b) {
+    const s = scoreForBuMetric(b, metricKey);
+    if (s > bestScore) {
+      bestScore = s;
+      bestName = b;
+    } else if (s === bestScore && String(b).localeCompare(String(bestName)) < 0) {
+      bestName = b;
+    }
+  });
+  return { bu: bestName, score: bestScore };
 }
 
 function renderBSC(){
-  const sum = window.CONVERTER_MIS && window.CONVERTER_MIS.summary;
-  if (sum && sum.length) {
-    const high = Math.max.apply(null, sum.map(function (s) { return s.score; }));
-    const avg = Math.round(sum.reduce(function (a, s) { return a + s.score; }, 0) / sum.length);
-    const totalKpi = sum.reduce(function (a, s) { return a + s.kpiCount; }, 0);
-    document.getElementById('bscHigh').textContent = high + '%';
-    document.getElementById('bscKeyEl').textContent = String(totalKpi);
-    document.getElementById('bscPerf').textContent = String(avg);
-    const row = document.getElementById('bscPerspRow');
-    if (row) {
-      row.innerHTML = sum.map(function (s) {
-        return '<div class="hero-card" data-tip="' + esc(s.pillar) + '"><h3>' + esc(s.perspective) + '</h3><div class="big">' + s.score + '%</div><div class="pct-note">' + esc(s.pillar) + '</div></div>';
-      }).join('');
+  const buEl = document.getElementById('buFilter');
+  const buSel = buEl ? String(buEl.value || '').trim() : 'All';
+  const isAll = !buSel || buSel === 'All';
+
+  const cards = [
+    { valId: 'kpiValHighest', ctxId: 'kpiCtxHighest', key: 'raw' },
+    { valId: 'kpiValLagging', ctxId: 'kpiCtxLagging', key: 'lagging' },
+    { valId: 'kpiValLeading', ctxId: 'kpiCtxLeading', key: 'leading' },
+    { valId: 'kpiValHr', ctxId: 'kpiCtxHr', key: 'hr' },
+    { valId: 'kpiValAssurance', ctxId: 'kpiCtxAssurance', key: 'assurance' },
+    { valId: 'kpiValLeadership', ctxId: 'kpiCtxLeadership', key: 'leadership' }
+  ];
+
+  cards.forEach(function (c) {
+    const valEl = document.getElementById(c.valId);
+    const ctxEl = document.getElementById(c.ctxId);
+    if (isAll) {
+      const t = findTopBuForMetric(c.key);
+      if (valEl) valEl.textContent = t.score + '%';
+      if (ctxEl) ctxEl.textContent = 'Top BU: ' + t.bu;
+    } else {
+      const s = scoreForBuMetric(buSel, c.key);
+      if (valEl) valEl.textContent = s + '%';
+      if (ctxEl) ctxEl.textContent = buSel;
     }
-  } else {
-    document.getElementById('bscHigh').textContent = '94%';
-    document.getElementById('bscKeyEl').textContent = '48';
-    document.getElementById('bscPerf').textContent = '82';
-    const row = document.getElementById('bscPerspRow');
-    if (row) {
-      const fb = [
-        { t: 'Lagging indicators', v: '22%', n: 'Involvement' },
-        { t: 'Leading indicators', v: '18%', n: 'Involvement' },
-        { t: 'HR perspective', v: '20%', n: 'Involvement' },
-        { t: 'Assurance', v: '19%', n: 'Involvement' },
-        { t: 'Leadership & governance', v: '21%', n: 'Involvement' }
-      ];
-      row.innerHTML = fb.map(function (x) {
-        return '<div class="hero-card"><h3>' + esc(x.t) + '</h3><div class="big">' + esc(x.v) + '</div><div class="pct-note">' + esc(x.n) + '</div></div>';
-      }).join('');
-    }
-  }
+  });
+
   renderBuPairs();
   const ga = document.getElementById('bandGroupA');
   const gb = document.getElementById('bandGroupB');
@@ -1062,14 +1299,17 @@ function renderBSC(){
   addBand(ga,'Q2',18,35,47,'QoQ · High risk portfolio');
   addBand(gb,'Q1',12,28,60,'Group B · Moderate risk');
   addBand(gb,'Q2',10,26,64,'QoQ shift toward green');
+  const ranked = rankBscUnitsByRaw();
   const wrap = document.getElementById('bscLollipop');
-  wrap.innerHTML = `<table class="bsc-table"><thead><tr>
-    <th>BU Name</th><th>BU Group</th><th>Raw Score</th><th>Rank in Group</th><th>Percentile in Group</th><th>Group Weightage</th><th>Weighted Score</th><th>Overall Rank</th><th>Raw (bar)</th>
+  wrap.innerHTML = `<table class="bsc-table">
+  <caption class="visually-hidden">All businesses sorted by overall rank. Columns include group, raw score, weighting, and rank.</caption>
+  <thead><tr>
+    <th scope="col">Business</th><th scope="col">BU Group</th><th scope="col">Raw Score</th><th scope="col">Rank in Group</th><th scope="col">Percentile in Group</th><th scope="col">Group Weightage</th><th scope="col">Weighted Score</th><th scope="col">Overall Rank</th><th scope="col">Raw (bar)</th>
   </tr></thead><tbody>
-  ${bscUnits.slice().sort((a,b)=>a.oa-b.oa).map(x=>{
-    const rkClass = 'rk-'+x.oa;
+  ${ranked.map(function (x) {
+    const rkClass = 'rk-' + x.oa;
     return `<tr>
-      <td>${esc(x.u)}</td>
+      <td>${esc(x.biz)}</td>
       <td>${esc(x.grp)}</td>
       <td>${x.raw}</td>
       <td>${x.rk}</td>
@@ -1077,106 +1317,108 @@ function renderBSC(){
       <td>${x.w}</td>
       <td>${x.ws}</td>
       <td class="cell-rank ${rkClass}">${x.oa}</td>
-      <td class="bsc-bar-cell"><div class="bar-wrap" data-tip="Raw ${x.raw}"><div class="bar-fill" style="width:${Math.min(100,x.raw)}%"></div></div></td>
+      <td class="bsc-bar-cell"><div class="bar-wrap" data-tip="Raw ${x.raw}"><div class="bar-fill" style="width:${Math.min(100, x.raw)}%"></div></div></td>
     </tr>`;
   }).join('')}
   </tbody></table>`;
+  renderBscSpotlight(ranked);
+  renderBscAltView(ranked);
 }
 
-function pillClass(st){
-  if (st === 'Open') return 'pill pill--open';
-  if (st === 'In Progress') return 'pill pill--ip';
-  return 'pill pill--res';
+function renderBscAltView(ranked){
+  const hi = document.getElementById('bscAltHigh');
+  const mo = document.getElementById('bscAltMod');
+  if (!hi || !mo) return;
+  const maxWs = Math.max.apply(null, ranked.map(function (x) { return x.ws; })) || 1;
+  const high = ranked.filter(function (x) { return /High/i.test(x.grp); }).sort(function (a, b) { return a.oa - b.oa; });
+  const mod = ranked.filter(function (x) { return /Moderate/i.test(x.grp); }).sort(function (a, b) { return a.oa - b.oa; });
+  function row(x){
+    const pct = Math.round((x.ws / maxWs) * 100);
+    const rk = Math.min(16, Math.max(1, x.oa));
+    const rkCls = 'rk-' + rk;
+    return '<div class="bsc-alt-row" role="listitem">' +
+      '<div class="bsc-alt-rank-badge ' + rkCls + '">' + x.oa + '</div>' +
+      '<div class="bsc-alt-main">' +
+        '<div class="bsc-alt-title"><span class="bsc-alt-bu">' + esc(x.biz) + '</span><span class="bsc-alt-grp">' + esc(x.grp) + '</span></div>' +
+        '<div class="bsc-alt-meta">Raw ' + x.raw + ' · In-group rank ' + x.rk + ' · Percentile ' + x.pct + ' · Weight ' + x.w + '</div>' +
+        '<div class="bsc-alt-bar-track" aria-hidden="true"><div class="bsc-alt-bar-fill" style="width:' + pct + '%"></div></div>' +
+      '</div>' +
+      '<div class="bsc-alt-ws"><span class="bsc-alt-ws-val">' + x.ws + '</span><span class="bsc-alt-ws-lab">Weighted</span></div>' +
+    '</div>';
+  }
+  hi.innerHTML = high.length ? high.map(row).join('') : '<p class="bsc-alt-view-intro" style="margin:0">No businesses in this group.</p>';
+  mo.innerHTML = mod.length ? mod.map(row).join('') : '<p class="bsc-alt-view-intro" style="margin:0">No businesses in this group.</p>';
 }
 
 function render(){
-  const isBsc = pageIdx === 5;
-  document.getElementById('misWrap').classList.toggle('hidden', isBsc);
-  document.getElementById('bscWrap').classList.toggle('active', isBsc);
-
-  const p = pages[pageIdx];
-  document.getElementById('pageTitle').textContent = 'Adani Group Safety — ' + p.name;
-
-  if (isBsc) {
-    document.getElementById('themeHint').textContent = p.theme ? ('Theme: ' + p.theme) : 'Balance scorecard — executive view';
-    renderBSC();
-    return;
-  }
-
-  const ui = pageUIs[pageIdx];
-  const sortedRows = sortRowsByKpiOrder(getFilteredPageRows());
-  if (selectedKpi && !sortedRows.some(r => r.kpi === selectedKpi)) selectedKpi = '';
-  document.getElementById('themeHint').textContent = p.theme
-    ? ('Theme: ' + p.theme + ' · ' + sortedRows.length + ' KPIs match filters')
-    : (sortedRows.length + ' KPIs match filters');
-  renderCharts(ui);
-  const grid = document.getElementById('kpiGrid');
-  grid.innerHTML = '';
-  const showCards = sortedRows.slice(0, ui.kpiCount);
-  showCards.forEach(r => {
-    const k = r.kpi;
-    const mm = withFilters(r);
-    const card = document.createElement('article');
-    card.className = 'card--kpi' + (selectedKpi === k ? ' active' : '');
-    card.setAttribute('data-tip', `${k} · ${mm.value}% · Tgt ${mm.target} · prior ${kpiPriorScore(mm.value, mm.delta)}%`);
-    card.innerHTML = execKpiCardInner(mm, k);
-    card.addEventListener('click', () => { selectedKpi = k; render(); });
-    grid.appendChild(card);
-  });
-  const tbody = document.getElementById('tbl');
-  tbody.innerHTML = '';
-  const maxRows = ui.tableRows != null ? ui.tableRows : sortedRows.length;
-  if (!sortedRows.length) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td colspan="7" style="text-align:center;color:#6D6E71;padding:12px;font-size:10px">No KPIs match the selected filters. Try setting Status to <strong>All</strong> or clearing other filters.</td>`;
-    tbody.appendChild(tr);
-  } else {
-    sortedRows.slice(0, maxRows).map(r => withFilters(r)).forEach(r => {
-      const tr = document.createElement('tr');
-      const arrow = r.trend === 'up' ? '▲' : '▼';
-      const tw = Math.min(100, Math.abs(r.delta) * 3 + 15);
-      const curDisp = Math.round(Number(r.value));
-      tr.innerHTML = `<td class="td-kpi">${esc(r.kpi)}</td><td><strong>${curDisp}</strong></td><td>${r.target}</td>
-        <td class="td-trend"><div class="trend-cell"><div class="trend-bar" title="Magnitude of change"><span style="width:${tw}%"></span></div><span class="trend-pct ${r.trend==='up'?'trend up':'trend down'}">${arrow} ${Math.abs(r.delta)}%</span></div></td>
-        <td><span class="${pillClass(r.status)}">${esc(r.status)}</span></td><td>${esc(r.lastUpdate)}</td><td>${esc(r.owner)}</td>`;
-      tbody.appendChild(tr);
-    });
-  }
+  renderBSC();
 }
 
 function tickClock(){
   const el = document.getElementById('clockEl');
   if (!el) return;
-  const d = new Date();
-  el.textContent = 'Last update: ' + d.toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true });
+  el.setAttribute('datetime', '2026-04-20');
+  el.innerHTML = '<span class="clock-line">Data refreshed: Daily</span><span class="clock-line">Last updated Monday, 20 April 2026</span>';
 }
-setInterval(tickClock, 1000);
 tickClock();
 
-document.querySelectorAll('.sbtn').forEach((btn, i) => {
-  btn.addEventListener('click', () => {
-    pageIdx = i;
-    selectedKpi = '';
-    mapZoom = 1;
-    document.querySelectorAll('.sbtn').forEach(x => x.classList.remove('active'));
-    btn.classList.add('active');
-    render();
-  });
-});
-document.getElementById('toggleNav').addEventListener('click', () => {
-  document.getElementById('canvas').classList.toggle('nav-collapsed');
-});
+function resetAllFilters(){
+  setTooltip(null);
+  const df = document.getElementById('dateFilter');
+  const lf = document.getElementById('lastUpdateFilter');
+  if (df) df.value = '';
+  if (lf) lf.value = '';
+  const q = document.getElementById('quarterFilter');
+  const bu = document.getElementById('buFilter');
+  const site = document.getElementById('siteFilter');
+  const sev = document.getElementById('severityFilter');
+  const st = document.getElementById('statusFilter');
+  if (q) q.value = 'All';
+  if (bu) bu.value = 'All';
+  if (site) site.value = 'All';
+  if (sev) sev.value = 'All';
+  if (st) st.value = 'All';
+  selectedKpi = '';
+  mapZoom = 1;
+  render();
+}
 function bindFilters(){
   const row = document.getElementById('filterRow');
   if (!row) return;
   const run = () => render();
   row.addEventListener('change', run);
   row.addEventListener('input', run);
+  const resetBtn = document.getElementById('filterReset');
+  if (resetBtn) resetBtn.addEventListener('click', (e) => { e.preventDefault(); resetAllFilters(); });
 }
 bindFilters();
 document.getElementById('dateFilter').value = today;
 document.getElementById('lastUpdateFilter').value = today;
-bindChartZoomHost(document.getElementById('charts'));
+(function bindBscSpotlightToggle(){
+  const sec = document.getElementById('bscRankSection');
+  if (!sec || sec.dataset.spotlightBound) return;
+  sec.dataset.spotlightBound = '1';
+  sec.addEventListener('click', function (e) {
+    const btn = e.target.closest('[data-spotlight]');
+    if (!btn) return;
+    const mode = btn.getAttribute('data-spotlight');
+    if (mode !== 'top' && mode !== 'bottom') return;
+    bscSpotlightMode = mode;
+    renderBscSpotlight(rankBscUnitsByRaw());
+  });
+  const tablist = sec.querySelector('.bsc-toggle');
+  if (tablist) {
+    tablist.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'Home' && e.key !== 'End') return;
+      e.preventDefault();
+      if (e.key === 'ArrowRight' || e.key === 'End') bscSpotlightMode = 'bottom';
+      else bscSpotlightMode = 'top';
+      renderBscSpotlight(rankBscUnitsByRaw());
+      var el = document.getElementById(bscSpotlightMode === 'top' ? 'tabSpotTop' : 'tabSpotBottom');
+      if (el) el.focus();
+    });
+  }
+})();
 render();
 </script>
 </body>
